@@ -15,10 +15,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import application.android.marshi.papercrane.R;
 import application.android.marshi.papercrane.dummy.DummyContent;
-import application.android.marshi.papercrane.fragment.TweetFragment;
+import application.android.marshi.papercrane.fragment.TweetListFragment;
 
 public class TweetListActivity extends AppCompatActivity
-		implements NavigationView.OnNavigationItemSelectedListener, TweetFragment.OnListFragmentInteractionListener {
+		implements NavigationView.OnNavigationItemSelectedListener, TweetListFragment.OnListFragmentInteractionListener {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -33,11 +33,14 @@ public class TweetListActivity extends AppCompatActivity
 				).setAction("Action", null).show()
 		);
 
-		replaceFragment(new TweetFragment());
-
 		DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 		ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-				this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+				this,
+				drawer,
+				toolbar,
+				R.string.navigation_drawer_open,
+				R.string.navigation_drawer_close
+		);
 		drawer.setDrawerListener(toggle);
 		toggle.syncState();
 

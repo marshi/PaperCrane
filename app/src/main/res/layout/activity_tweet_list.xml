@@ -21,9 +21,9 @@
 
 		<fragment
 						android:id="@+id/content_tweet"
+						android:name="application.android.marshi.papercrane.fragment.TweetListFragment"
 						android:layout_width="match_parent"
 						android:layout_height="match_parent"
-		        class="application.android.marshi.papercrane.fragment.TweetFragment"
 		/>
 
 	</LinearLayout>

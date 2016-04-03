@@ -4,6 +4,9 @@ apply plugin: 'me.tatarka.retrolambda'
 android {
     compileSdkVersion 22
     buildToolsVersion "23.0.2"
+    dataBinding {
+        enabled = true
+    }
 
     defaultConfig {
         applicationId "application.android.marshi.papercrane"
