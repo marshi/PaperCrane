@@ -18,7 +18,7 @@ public class BindingHolder<T extends ViewDataBinding> extends RecyclerView.ViewH
 
 	public BindingHolder(@NonNull Context context, @NonNull ViewGroup parent, @LayoutRes int layoutResId) {
 		super(LayoutInflater.from(context).inflate(layoutResId, parent, false));
-		binding = DataBindingUtil.findBinding(itemView);
+		binding = DataBindingUtil.bind(itemView);
 	}
 
 }

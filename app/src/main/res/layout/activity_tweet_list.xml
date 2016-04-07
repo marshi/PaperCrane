@@ -14,16 +14,15 @@
 					android:layout_height="match_parent"
 	        android:orientation="vertical"
 	>
-		<include
-						layout="@layout/app_bar_tweet_list"
-						android:layout_width="match_parent"
-						android:layout_height="match_parent"/>
 
 		<fragment
 						android:id="@+id/content_tweet"
 						android:name="application.android.marshi.papercrane.fragment.TweetListFragment"
 						android:layout_width="match_parent"
 						android:layout_height="match_parent"
+		/>
+		<include
+						layout="@layout/app_bar_tweet_list"
 		/>
 
 	</LinearLayout>
