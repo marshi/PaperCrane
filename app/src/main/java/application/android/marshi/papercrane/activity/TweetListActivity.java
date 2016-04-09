@@ -12,7 +12,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import application.android.marshi.papercrane.R;
-import application.android.marshi.papercrane.dummy.DummyContent;
+import application.android.marshi.papercrane.model.TweetItem;
 import application.android.marshi.papercrane.fragment.TweetListFragment;
 
 public class TweetListActivity extends AppCompatActivity
@@ -111,7 +111,7 @@ public class TweetListActivity extends AppCompatActivity
 	}
 
 	@Override
-	public void onListFragmentInteraction(DummyContent.DummyItem item) {
+	public void onListFragmentInteraction(TweetItem item) {
 
 	}
 }

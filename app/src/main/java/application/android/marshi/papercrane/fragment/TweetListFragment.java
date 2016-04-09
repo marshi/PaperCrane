@@ -12,8 +12,8 @@ import android.view.ViewGroup;
 import application.android.marshi.papercrane.BindingHolder;
 import application.android.marshi.papercrane.R;
 import application.android.marshi.papercrane.databinding.FragmentTweetBinding;
-import application.android.marshi.papercrane.dummy.DummyContent;
-import application.android.marshi.papercrane.dummy.DummyContent.DummyItem;
+import application.android.marshi.papercrane.domain.timeline.TimelineListUseCase;
+import application.android.marshi.papercrane.model.TweetItem;
 
 import java.util.List;
 
@@ -29,6 +29,8 @@ public class TweetListFragment extends Fragment {
 	private static final String ARG_COLUMN_COUNT = "column-count";
 
 	private OnListFragmentInteractionListener mListener;
+
+	private TimelineListUseCase tiemTimelineListUseCase = new TimelineListUseCase();
 
 	// TODO: Customize parameter initialization
 	@SuppressWarnings("unused")
@@ -61,7 +63,7 @@ public class TweetListFragment extends Fragment {
 			Context context = view.getContext();
 			RecyclerView recyclerView = (RecyclerView) view;
 			recyclerView.setLayoutManager(new LinearLayoutManager(context));
-			recyclerView.setAdapter(new MyTweetRecyclerViewAdapter(DummyContent.ITEMS, mListener));
+			recyclerView.setAdapter(new MyTweetRecyclerViewAdapter(null, mListener));
 		}
 		return view;
 	}
@@ -96,14 +98,14 @@ public class TweetListFragment extends Fragment {
 	 */
 	public interface OnListFragmentInteractionListener {
 		// TODO: Update argument type and name
-		void onListFragmentInteraction(DummyItem item);
+		void onListFragmentInteraction(TweetItem item);
 	}
 
 	private class MyTweetRecyclerViewAdapter extends RecyclerView.Adapter<BindingHolder<FragmentTweetBinding>> {
 
-		private final List<DummyItem> mValues;
+		private final List<TweetItem> mValues;
 
-		public MyTweetRecyclerViewAdapter(List<DummyItem> items, TweetListFragment.OnListFragmentInteractionListener listener) {
+		public MyTweetRecyclerViewAdapter(List<TweetItem> items, TweetListFragment.OnListFragmentInteractionListener listener) {
 			mValues = items;
 			mListener = listener;
 		}
@@ -115,8 +117,8 @@ public class TweetListFragment extends Fragment {
 
 		@Override
 		public void onBindViewHolder(BindingHolder<FragmentTweetBinding> holder, int position) {
-			DummyItem dummyItem = mValues.get(position);
-			holder.binding.setTweet(dummyItem);
+			TweetItem tweetItem = mValues.get(position);
+			holder.binding.setTweet(tweetItem);
 		}
 
 		@Override
