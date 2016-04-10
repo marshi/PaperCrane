@@ -1,4 +1,4 @@
-package application.android.marshi.papercrane.model;
+package application.android.marshi.papercrane.domain.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
