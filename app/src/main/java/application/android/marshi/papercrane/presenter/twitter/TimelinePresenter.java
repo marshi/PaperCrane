@@ -17,7 +17,7 @@ public class TimelinePresenter extends Presenter {
 	public TimelinePresenter() {}
 
 	@Inject
-	private GetTimelineUseCase getTimelineUseCase;
+	GetTimelineUseCase getTimelineUseCase;
 
 	public List<TweetItem> getTweetItems(AccessToken accessToken) {
 		getTimelineUseCase.start(accessToken);

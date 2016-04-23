@@ -37,7 +37,9 @@ public class MainTimelineActivity extends AppCompatActivity {
 		}
 		AccessToken accessToken = accessTokenPresenter.getAccessToken();
 		timelinePresenter.getTweetItems(accessToken);
-
+//		EventBusBroker.tweetListEventBus.get(Event.GetTweetList).subscribe(tweetItems ->
+//
+//		);
 	}
 
 }

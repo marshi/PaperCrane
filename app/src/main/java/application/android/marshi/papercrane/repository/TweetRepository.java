@@ -1,11 +1,16 @@
 package application.android.marshi.papercrane.repository;
 
+import android.util.Log;
+import application.android.marshi.papercrane.TwitterClient;
 import application.android.marshi.papercrane.domain.model.TweetItem;
 import lombok.Data;
+import twitter4j.ResponseList;
+import twitter4j.Status;
 import twitter4j.Twitter;
-import twitter4j.TwitterFactory;
+import twitter4j.auth.AccessToken;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -14,15 +19,26 @@ import java.util.List;
 @Data
 public class TweetRepository {
 
-	private Twitter twitter;
-
 	@Inject
-	public TweetRepository() {
-		twitter = TwitterFactory.getSingleton();
+	public TweetRepository(){}
+
+	public List<TweetItem> getTweetItemList(AccessToken accessToken) {
+		try {
+			Twitter twitter = TwitterClient.getInstance(accessToken);
+			ResponseList<Status> statuses =  twitter.getHomeTimeline();
+			List<TweetItem> tweetItemList = new ArrayList<>();
+			for (Status status : statuses) {
+				tweetItemList.add(convertFrom(status));
+			}
+			return tweetItemList;
+		} catch (Exception e) {
+			Log.e("tag", e.toString());
+		}
+		return null;
 	}
 
-	public List<TweetItem> getTweetItemList() {
-		return null;
+	private TweetItem convertFrom(Status status) {
+		return new TweetItem(status.getId(), status.getText());
 	}
 
 }

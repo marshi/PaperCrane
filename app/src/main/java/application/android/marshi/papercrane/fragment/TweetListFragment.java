@@ -13,7 +13,6 @@ import application.android.marshi.papercrane.BindingHolder;
 import application.android.marshi.papercrane.R;
 import application.android.marshi.papercrane.databinding.FragmentTweetBinding;
 import application.android.marshi.papercrane.domain.model.TweetItem;
-import application.android.marshi.papercrane.domain.usecase.timeline.GetTimelineUseCase;
 
 import java.util.List;
 
@@ -29,8 +28,6 @@ public class TweetListFragment extends Fragment {
 	private static final String ARG_COLUMN_COUNT = "column-count";
 
 	private OnListFragmentInteractionListener mListener;
-
-	private GetTimelineUseCase tiemGetTimelineUseCase = new GetTimelineUseCase();
 
 	// TODO: Customize parameter initialization
 	@SuppressWarnings("unused")
