@@ -12,11 +12,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import application.android.marshi.papercrane.R;
-import application.android.marshi.papercrane.domain.model.TweetItem;
-import application.android.marshi.papercrane.fragment.TweetListFragment;
 
 public class TweetListActivity extends AppCompatActivity
-		implements NavigationView.OnNavigationItemSelectedListener, TweetListFragment.OnListFragmentInteractionListener {
+		implements NavigationView.OnNavigationItemSelectedListener {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -104,8 +102,4 @@ public class TweetListActivity extends AppCompatActivity
 		ft.commit();
 	}
 
-	@Override
-	public void onListFragmentInteraction(TweetItem item) {
-
-	}
 }

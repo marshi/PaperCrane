@@ -4,6 +4,7 @@ import application.android.marshi.papercrane.activity.LoginActivity;
 import application.android.marshi.papercrane.activity.MainTimelineActivity;
 import application.android.marshi.papercrane.di.module.AppModule;
 import application.android.marshi.papercrane.di.module.RepositoryModule;
+import application.android.marshi.papercrane.fragment.TweetListFragment;
 import dagger.Component;
 
 import javax.inject.Singleton;
@@ -19,4 +20,5 @@ public interface AppComponent {
 
 	void inject(MainTimelineActivity mainTimelineActivity);
 
+	void inject(TweetListFragment tweetListFragment);
 }

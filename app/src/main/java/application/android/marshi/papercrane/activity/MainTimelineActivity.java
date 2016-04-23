@@ -8,7 +8,6 @@ import application.android.marshi.papercrane.R;
 import application.android.marshi.papercrane.di.App;
 import application.android.marshi.papercrane.presenter.auth.AccessTokenPresenter;
 import application.android.marshi.papercrane.presenter.twitter.TimelinePresenter;
-import twitter4j.auth.AccessToken;
 
 import javax.inject.Inject;
 
@@ -27,7 +26,7 @@ public class MainTimelineActivity extends AppCompatActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_login_callback);
+		setContentView(R.layout.activity_tweet_list);
 		((App)getApplication()).getApplicationComponent().inject(this);
 		Intent intent = getIntent();
 		String action = intent.getAction();
@@ -35,11 +34,7 @@ public class MainTimelineActivity extends AppCompatActivity {
 			Uri uri = intent.getData();
 			accessTokenPresenter.saveAccessToken(uri);
 		}
-		AccessToken accessToken = accessTokenPresenter.getAccessToken();
-		timelinePresenter.getTweetItems(accessToken);
-//		EventBusBroker.tweetListEventBus.get(Event.GetTweetList).subscribe(tweetItems ->
-//
-//		);
+
 	}
 
 }
