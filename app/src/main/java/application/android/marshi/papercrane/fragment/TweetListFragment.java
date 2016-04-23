@@ -12,8 +12,8 @@ import android.view.ViewGroup;
 import application.android.marshi.papercrane.BindingHolder;
 import application.android.marshi.papercrane.R;
 import application.android.marshi.papercrane.databinding.FragmentTweetBinding;
-import application.android.marshi.papercrane.domain.timeline.TimelineListUseCase;
-import application.android.marshi.papercrane.model.TweetItem;
+import application.android.marshi.papercrane.domain.model.TweetItem;
+import application.android.marshi.papercrane.domain.usecase.timeline.TimelineListUseCase;
 
 import java.util.List;
 

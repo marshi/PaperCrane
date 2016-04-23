@@ -1,4 +1,4 @@
-package application.android.marshi.papercrane.domain;
+package application.android.marshi.papercrane.domain.usecase;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;

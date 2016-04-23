@@ -1,6 +1,6 @@
 package application.android.marshi.papercrane.repository;
 
-import application.android.marshi.papercrane.model.TweetItem;
+import application.android.marshi.papercrane.domain.model.TweetItem;
 import lombok.Data;
 
 import java.util.List;

@@ -1,7 +1,7 @@
-package application.android.marshi.papercrane.domain.timeline;
+package application.android.marshi.papercrane.domain.usecase.timeline;
 
-import application.android.marshi.papercrane.domain.UseCase;
-import application.android.marshi.papercrane.model.User;
+import application.android.marshi.papercrane.domain.usecase.UseCase;
+import application.android.marshi.papercrane.domain.model.User;
 import application.android.marshi.papercrane.repository.TweetRepository;
 
 /**
