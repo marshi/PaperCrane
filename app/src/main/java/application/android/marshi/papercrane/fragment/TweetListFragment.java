@@ -2,6 +2,7 @@ package application.android.marshi.papercrane.fragment;
 
 import android.content.Context;
 import android.databinding.DataBindingUtil;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -84,6 +85,7 @@ public class TweetListFragment extends Fragment {
 						Context context = recyclerView.getContext();
 						recyclerView.setLayoutManager(new LinearLayoutManager(context));
 						recyclerView.setAdapter(new TweetRecyclerViewAdapter(tweetItems));
+						recyclerView.addItemDecoration(new TweetRecyclerViewItemDecoration());
 					});
 			timelinePresenter.getTweetItems(accessToken);
 		}
@@ -113,5 +115,15 @@ public class TweetListFragment extends Fragment {
 			return mValues.size();
 		}
 
+	}
+
+	private class TweetRecyclerViewItemDecoration extends RecyclerView.ItemDecoration {
+
+		@Override
+		public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+			super.getItemOffsets(outRect, view, parent, state);
+			outRect.top = 20;
+			outRect.bottom = 20;
+		}
 	}
 }

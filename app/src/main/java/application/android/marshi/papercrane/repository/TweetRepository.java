@@ -7,6 +7,7 @@ import lombok.Data;
 import twitter4j.ResponseList;
 import twitter4j.Status;
 import twitter4j.Twitter;
+import twitter4j.User;
 import twitter4j.auth.AccessToken;
 
 import javax.inject.Inject;
@@ -38,7 +39,12 @@ public class TweetRepository {
 	}
 
 	private TweetItem convertFrom(Status status) {
-		return new TweetItem(status.getId(), status.getText(), status.getUser().getProfileImageURL());
+		User user = status.getUser();
+		return new TweetItem(
+				status.getId(),
+				status.getText(),
+				user.getName(),
+				user.getProfileImageURL());
 	}
 
 }

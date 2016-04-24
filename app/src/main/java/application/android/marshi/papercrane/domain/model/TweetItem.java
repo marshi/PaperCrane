@@ -7,12 +7,14 @@ import com.bumptech.glide.Glide;
 public class TweetItem {
 
     private final Long id;
+    private final String userName;
     private final String content;
     private final String profileImageUrl;
 
-    public TweetItem(Long id, String content, String profileImageUrl) {
+    public TweetItem(Long id, String content, String userName, String profileImageUrl) {
         this.id = id;
         this.content = content;
+        this.userName = userName;
         this.profileImageUrl = profileImageUrl;
     }
 
@@ -22,6 +24,10 @@ public class TweetItem {
 
     public String getContent() {
         return content;
+    }
+
+    public String getUserName() {
+        return userName;
     }
 
     public String getProfileImageUrl() {
