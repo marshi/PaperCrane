@@ -5,9 +5,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import application.android.marshi.papercrane.R;
+import application.android.marshi.papercrane.databinding.AppBarTweetListBinding;
 import application.android.marshi.papercrane.di.App;
 import application.android.marshi.papercrane.presenter.auth.AccessTokenPresenter;
-import application.android.marshi.papercrane.presenter.twitter.TimelinePresenter;
 
 import javax.inject.Inject;
 
@@ -20,8 +20,7 @@ public class MainTimelineActivity extends AppCompatActivity {
 	@Inject
 	AccessTokenPresenter accessTokenPresenter;
 
-	@Inject
-	TimelinePresenter timelinePresenter;
+	private AppBarTweetListBinding appBarTweetListBinding;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {

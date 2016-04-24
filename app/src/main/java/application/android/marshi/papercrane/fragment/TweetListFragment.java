@@ -3,6 +3,7 @@ package application.android.marshi.papercrane.fragment;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -67,6 +68,12 @@ public class TweetListFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		fragmentTweetListBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_tweet_list, container, false);
+		return fragmentTweetListBinding.fragmentTweetList;
+	}
+
+	@Override
+	public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
 		RecyclerView recyclerView = fragmentTweetListBinding.fragmentTweetList;
 		// Set the adapter
 		if (recyclerView != null) {
@@ -80,7 +87,6 @@ public class TweetListFragment extends Fragment {
 					});
 			timelinePresenter.getTweetItems(accessToken);
 		}
-		return recyclerView;
 	}
 
 	private class TweetRecyclerViewAdapter extends RecyclerView.Adapter<BindingHolder<FragmentTweetBinding>> {
