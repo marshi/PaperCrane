@@ -38,7 +38,7 @@ public class TweetRepository {
 	}
 
 	private TweetItem convertFrom(Status status) {
-		return new TweetItem(status.getId(), status.getText());
+		return new TweetItem(status.getId(), status.getText(), status.getUser().getProfileImageURL());
 	}
 
 }

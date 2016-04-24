@@ -1,19 +1,39 @@
 package application.android.marshi.papercrane.domain.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import android.databinding.BindingAdapter;
+import android.widget.ImageView;
+import com.bumptech.glide.Glide;
 
-
-@AllArgsConstructor
-@Data
 public class TweetItem {
 
-    public final Long id;
-    public final String content;
+    private final Long id;
+    private final String content;
+    private final String profileImageUrl;
 
-    @Override
-    public String toString() {
+    public TweetItem(Long id, String content, String profileImageUrl) {
+        this.id = id;
+        this.content = content;
+        this.profileImageUrl = profileImageUrl;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getContent() {
         return content;
     }
+
+    public String getProfileImageUrl() {
+        return profileImageUrl;
+    }
+
+    @BindingAdapter("profileImage")
+    public static void setImage(ImageView view,String oldUrl, String newUrl) {
+        if (!newUrl.equals(oldUrl)) {
+            Glide.with(view.getContext()).load(newUrl).into(view);
+        }
+    }
+
 }
 
