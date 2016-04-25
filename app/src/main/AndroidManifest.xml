@@ -17,23 +17,31 @@
 					android:supportsRtl="true"
 					android:theme="@style/AppTheme">
 		<activity
-						android:name=".activity.LoginActivity"
-						android:label="@string/title_activity_login">
+						android:name=".activity.MainActivity"
+						android:noHistory="true"
+		        android:launchMode="singleTask"
+		>
 			<intent-filter android:label="@string/app_name">
 				<action android:name="android.intent.action.MAIN"/>
-
 				<category android:name="android.intent.category.LAUNCHER"/>
 			</intent-filter>
 		</activity>
+
 		<activity
-						android:name=".activity.TweetListActivity"
-						android:theme="@style/AppTheme.NoActionBar"
+						android:name=".activity.LoginActivity"
+						android:label="@string/title_activity_login"
+						android:launchMode="singleTask"
 		>
 		</activity>
-		<activity android:name=".activity.MainTimelineActivity"
-		          android:launchMode="singleInstance"
-		          android:theme="@style/AppTheme.NoActionBar"
-		>
+		<activity
+						android:name=".activity.TweetListActivity"
+						android:theme="@style/AppTheme.NoActionBar">
+		</activity>
+
+		<activity
+						android:name=".activity.MainTimelineActivity"
+						android:launchMode="singleInstance"
+						android:theme="@style/AppTheme.NoActionBar">
 			<intent-filter>
 				<action android:name="android.intent.action.VIEW"/>
 				<category android:name="android.intent.category.DEFAULT"/>
@@ -48,6 +56,7 @@
 		<meta-data
 						android:name="com.google.android.gms.version"
 						android:value="@integer/google_play_services_version"/>
+
 	</application>
 
 </manifest>

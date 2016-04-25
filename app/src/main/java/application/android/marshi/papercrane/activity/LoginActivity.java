@@ -16,7 +16,6 @@ import application.android.marshi.papercrane.eventbus.Event;
 import application.android.marshi.papercrane.eventbus.EventBusBroker;
 import application.android.marshi.papercrane.presenter.auth.AccessTokenPresenter;
 import application.android.marshi.papercrane.presenter.auth.TwitterAuthorizationPresenter;
-import twitter4j.auth.AccessToken;
 
 import javax.inject.Inject;
 
@@ -38,10 +37,6 @@ public class LoginActivity extends AppCompatActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		((App)getApplication()).getApplicationComponent().inject(this);
-		AccessToken accessToken = accessTokenPresenter.getAccessToken();
-		if (accessToken != null) {
-			startActivity(new Intent(getApplicationContext(), MainTimelineActivity.class));
-		}
 		activityLoginBinding =  DataBindingUtil.setContentView(this, R.layout.activity_login);
 		Button mEmailSignInButton = activityLoginBinding.emailSignInButton;
 		EventBusBroker.stringEventBus.get(Event.LoginAuthorization).subscribe(

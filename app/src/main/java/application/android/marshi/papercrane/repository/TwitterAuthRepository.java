@@ -1,9 +1,8 @@
 package application.android.marshi.papercrane.repository;
 
-import application.android.marshi.papercrane.BuildConfig;
+import application.android.marshi.papercrane.TwitterClient;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
-import twitter4j.TwitterFactory;
 import twitter4j.auth.AccessToken;
 import twitter4j.auth.RequestToken;
 
@@ -18,8 +17,7 @@ public class TwitterAuthRepository {
 
 	static {
 		if (twitter == null) {
-			twitter = TwitterFactory.getSingleton();
-			twitter.setOAuthConsumer(BuildConfig.CONSUMER_KEY, BuildConfig.SECRET_KEY);
+			twitter = TwitterClient.getInstance();
 		}
 	}
 
