@@ -18,7 +18,7 @@ public class MainActivity extends AppCompatActivity {
 		super.onCreate(savedInstanceState);
 		((App)getApplication()).getApplicationComponent().inject(this);
 		if (login()) {
-			Intent intent = new Intent(getApplicationContext(), MainTimelineActivity.class);
+			Intent intent = new Intent(getApplicationContext(), HomeTimelineActivity.class);
 			startActivity(intent);
 		} else {
 			Intent intent = new Intent(getApplicationContext(), LoginActivity.class);

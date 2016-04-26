@@ -33,13 +33,9 @@
 						android:launchMode="singleTask"
 		>
 		</activity>
-		<activity
-						android:name=".activity.TweetListActivity"
-						android:theme="@style/AppTheme.NoActionBar">
-		</activity>
 
 		<activity
-						android:name=".activity.MainTimelineActivity"
+						android:name=".activity.HomeTimelineActivity"
 						android:launchMode="singleInstance"
 						android:theme="@style/AppTheme.NoActionBar">
 			<intent-filter>

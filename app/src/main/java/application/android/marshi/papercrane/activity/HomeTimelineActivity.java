@@ -14,7 +14,7 @@ import javax.inject.Inject;
  * タイムラインが表示される.
  * TwitterページでのOAuth認証後コールバックで呼び出されるアクティビティでもある.
  */
-public class MainTimelineActivity extends AppCompatActivity {
+public class HomeTimelineActivity extends AppCompatActivity {
 
 	@Inject
 	AccessTokenPresenter accessTokenPresenter;
