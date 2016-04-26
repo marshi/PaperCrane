@@ -13,8 +13,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import application.android.marshi.papercrane.BindingHolder;
 import application.android.marshi.papercrane.R;
-import application.android.marshi.papercrane.databinding.FragmentTweetBinding;
 import application.android.marshi.papercrane.databinding.FragmentTweetListBinding;
+import application.android.marshi.papercrane.databinding.TweetItemBinding;
 import application.android.marshi.papercrane.di.App;
 import application.android.marshi.papercrane.domain.model.TweetItem;
 import application.android.marshi.papercrane.eventbus.Event;
@@ -36,6 +36,8 @@ public class TweetListFragment extends Fragment {
 	private static final String ARG_COLUMN_COUNT = "column-count";
 
 	private FragmentTweetListBinding fragmentTweetListBinding;
+
+	private TweetItemBinding tweetItemBinding;
 
 	@Inject
 	AccessTokenPresenter accessTokenPresenter;
@@ -91,7 +93,7 @@ public class TweetListFragment extends Fragment {
 		}
 	}
 
-	private class TweetRecyclerViewAdapter extends RecyclerView.Adapter<BindingHolder<FragmentTweetBinding>> {
+	private class TweetRecyclerViewAdapter extends RecyclerView.Adapter<BindingHolder<TweetItemBinding>> {
 
 		private final List<TweetItem> mValues;
 
@@ -100,12 +102,12 @@ public class TweetListFragment extends Fragment {
 		}
 
 		@Override
-		public BindingHolder<FragmentTweetBinding> onCreateViewHolder(ViewGroup parent, int viewType) {
-			return new BindingHolder<>(getActivity(), parent, R.layout.fragment_tweet);
+		public BindingHolder<TweetItemBinding> onCreateViewHolder(ViewGroup parent, int viewType) {
+			return new BindingHolder<>(getActivity(), parent, R.layout.tweet_item);
 		}
 
 		@Override
-		public void onBindViewHolder(BindingHolder<FragmentTweetBinding> holder, int position) {
+		public void onBindViewHolder(BindingHolder<TweetItemBinding> holder, int position) {
 			TweetItem tweetItem = mValues.get(position);
 			holder.binding.setTweet(tweetItem);
 		}
