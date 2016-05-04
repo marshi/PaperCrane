@@ -1,6 +1,5 @@
 package application.android.marshi.papercrane.fragment;
 
-import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.graphics.Rect;
 import android.os.Bundle;
@@ -47,8 +46,6 @@ public class TweetListFragment extends Fragment {
 	@Inject
 	TimelinePresenter timelinePresenter;
 
-
-
 	// TODO: Customize parameter initialization
 	@SuppressWarnings("unused")
 	public static TweetListFragment newInstance(int columnCount) {
@@ -83,10 +80,11 @@ public class TweetListFragment extends Fragment {
 		super.onActivityCreated(savedInstanceState);
 		//set recyclerView
 		RecyclerView recyclerView = fragmentTweetListBinding.fragmentTweetList;
-		Context context = recyclerView.getContext();
-		recyclerView.setLayoutManager(new LinearLayoutManager(context));
+		recyclerView.setItemViewCacheSize(1000);
+		LinearLayoutManager layoutManager = new LinearLayoutManager(this.getActivity());
+		recyclerView.setLayoutManager(layoutManager);
 		recyclerView.addItemDecoration(new TweetRecyclerViewItemDecoration());
-		recyclerView.addOnScrollListener(new InfinityScrollListener((LinearLayoutManager)recyclerView.getLayoutManager()));
+		recyclerView.addOnScrollListener(new InfinityScrollListener(layoutManager));
 		tweetRecyclerViewAdapter = new TweetRecyclerViewAdapter(new ArrayList<>());
 		recyclerView.setAdapter(tweetRecyclerViewAdapter);
 
@@ -104,10 +102,7 @@ public class TweetListFragment extends Fragment {
 		timelinePresenter.getTweetItems(accessToken);
 	}
 
-	/**
-	 * RecyclerViewの見た目を調整する.
-	 * 各要素の余白やボーダーなど.
-	 */
+
 	private class TweetRecyclerViewAdapter extends RecyclerView.Adapter<BindingHolder<TweetItemBinding>> {
 
 		private final List<TweetItem> mValues;
@@ -141,6 +136,10 @@ public class TweetListFragment extends Fragment {
 
 	}
 
+	/**
+	 * RecyclerViewの見た目を調整する.
+	 * 各要素の余白やボーダーなど.
+	 */
 	private class TweetRecyclerViewItemDecoration extends RecyclerView.ItemDecoration {
 		@Override
 		public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
@@ -168,7 +167,6 @@ public class TweetListFragment extends Fragment {
 			super.onScrolled(recyclerView, dx, dy);
 			int totalItemCount = linearLayoutManager.getItemCount();
 			int lastVisibleItemPosition = linearLayoutManager.findLastVisibleItemPosition();
-
 			boolean isScrollEnd = lastVisibleItemPosition + 1 == totalItemCount;
 			if (previousTotalItemCount != totalItemCount && isScrollEnd) {
 				previousTotalItemCount = totalItemCount;

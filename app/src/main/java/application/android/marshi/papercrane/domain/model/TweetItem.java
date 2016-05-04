@@ -6,10 +6,10 @@ import com.bumptech.glide.Glide;
 
 public class TweetItem {
 
-    private final Long id;
-    private final String userName;
-    private final String content;
-    private final String profileImageUrl;
+    private Long id;
+    private String userName;
+    private String content;
+    private String profileImageUrl;
 
     public TweetItem(Long id, String content, String userName, String profileImageUrl) {
         this.id = id;
@@ -26,6 +26,10 @@ public class TweetItem {
         return content;
     }
 
+    public void setContent(String content) {
+        this.content = content;
+    }
+
     public String getUserName() {
         return userName;
     }
@@ -40,6 +44,9 @@ public class TweetItem {
             Glide.with(view.getContext()).load(newUrl).into(view);
         }
     }
+
+
+
 
 }
 

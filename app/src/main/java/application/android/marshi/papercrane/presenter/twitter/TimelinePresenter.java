@@ -29,7 +29,7 @@ public class TimelinePresenter extends Presenter {
 	}
 
 	public List<TweetItem> getTweetItems(AccessToken accessToken, long maxId) {
-		Paging paging = new Paging().maxId(maxId - 1).count(20);
+		Paging paging = new Paging().maxId(maxId - 1).count(50);
 		getTimelineUseCase.start(new TimelineRequest(accessToken, paging));
 		return null;
 	}
