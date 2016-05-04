@@ -1,6 +1,5 @@
 package application.android.marshi.papercrane.fragment;
 
-import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.graphics.Rect;
 import android.os.Bundle;
@@ -11,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 import application.android.marshi.papercrane.BindingHolder;
 import application.android.marshi.papercrane.R;
 import application.android.marshi.papercrane.databinding.FragmentTweetListBinding;
@@ -25,6 +25,7 @@ import rx.android.schedulers.AndroidSchedulers;
 import twitter4j.auth.AccessToken;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -37,7 +38,7 @@ public class TweetListFragment extends Fragment {
 
 	private FragmentTweetListBinding fragmentTweetListBinding;
 
-	private TweetItemBinding tweetItemBinding;
+	private TweetRecyclerViewAdapter tweetRecyclerViewAdapter;
 
 	@Inject
 	AccessTokenPresenter accessTokenPresenter;
@@ -77,21 +78,30 @@ public class TweetListFragment extends Fragment {
 	@Override
 	public void onActivityCreated(@Nullable Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
+		//set recyclerView
 		RecyclerView recyclerView = fragmentTweetListBinding.fragmentTweetList;
-		// Set the adapter
-		if (recyclerView != null) {
-			AccessToken accessToken = accessTokenPresenter.getAccessToken();
-			EventBusBroker.tweetListEventBus.get(Event.GetTweetList)
-					.observeOn(AndroidSchedulers.mainThread())
-					.subscribe(tweetItems -> {
-						Context context = recyclerView.getContext();
-						recyclerView.setLayoutManager(new LinearLayoutManager(context));
-						recyclerView.setAdapter(new TweetRecyclerViewAdapter(tweetItems));
-						recyclerView.addItemDecoration(new TweetRecyclerViewItemDecoration());
-					});
-			timelinePresenter.getTweetItems(accessToken);
-		}
+		recyclerView.setItemViewCacheSize(1000);
+		LinearLayoutManager layoutManager = new LinearLayoutManager(this.getActivity());
+		recyclerView.setLayoutManager(layoutManager);
+		recyclerView.addItemDecoration(new TweetRecyclerViewItemDecoration());
+		recyclerView.addOnScrollListener(new InfinityScrollListener(layoutManager));
+		tweetRecyclerViewAdapter = new TweetRecyclerViewAdapter(new ArrayList<>());
+		recyclerView.setAdapter(tweetRecyclerViewAdapter);
+
+		AccessToken accessToken = accessTokenPresenter.getAccessToken();
+		EventBusBroker.tweetListEventBus.get(Event.GetTweetList)
+				.observeOn(AndroidSchedulers.mainThread())
+				.subscribe(tweetItems -> {
+					tweetRecyclerViewAdapter.addItems(tweetItems);
+				});
+		EventBusBroker.stringEventBus.get(Event.ShowToast)
+				.observeOn(AndroidSchedulers.mainThread())
+				.subscribe(text -> {
+					Toast.makeText(this.getActivity(), text, Toast.LENGTH_LONG).show();}
+				);
+		timelinePresenter.getTweetItems(accessToken);
 	}
+
 
 	private class TweetRecyclerViewAdapter extends RecyclerView.Adapter<BindingHolder<TweetItemBinding>> {
 
@@ -117,10 +127,20 @@ public class TweetListFragment extends Fragment {
 			return mValues.size();
 		}
 
+		synchronized public void addItems(List<TweetItem> tweetList) {
+			for (TweetItem tweet: tweetList) {
+				this.mValues.add(tweet);
+				notifyItemInserted(mValues.size() - 1);
+			}
+		}
+
 	}
 
+	/**
+	 * RecyclerViewの見た目を調整する.
+	 * 各要素の余白やボーダーなど.
+	 */
 	private class TweetRecyclerViewItemDecoration extends RecyclerView.ItemDecoration {
-
 		@Override
 		public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
 			super.getItemOffsets(outRect, view, parent, state);
@@ -128,4 +148,36 @@ public class TweetListFragment extends Fragment {
 			outRect.bottom = 20;
 		}
 	}
+
+	/**
+	 * 無限スクロールを行うためのリスナー.
+	 * 取得済みのツイートのうち最古のツイートを表示したらさらに古いツイートを取得してRecyclerViewに追加する.
+	 */
+	private class InfinityScrollListener extends RecyclerView.OnScrollListener {
+
+		private int previousTotalItemCount = 0;
+		private LinearLayoutManager linearLayoutManager;
+
+		public InfinityScrollListener(LinearLayoutManager linearLayoutManager) {
+			this.linearLayoutManager = linearLayoutManager;
+		}
+
+		@Override
+		public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+			super.onScrolled(recyclerView, dx, dy);
+			int totalItemCount = linearLayoutManager.getItemCount();
+			int lastVisibleItemPosition = linearLayoutManager.findLastVisibleItemPosition();
+			boolean isScrollEnd = lastVisibleItemPosition + 1 == totalItemCount;
+			if (previousTotalItemCount != totalItemCount && isScrollEnd) {
+				previousTotalItemCount = totalItemCount;
+				onLoadMore(tweetRecyclerViewAdapter.mValues.get(tweetRecyclerViewAdapter.mValues.size() - 1));
+			}
+		}
+
+		private void onLoadMore(TweetItem lastTweetItem) {
+			timelinePresenter.getTweetItems(accessTokenPresenter.getAccessToken(), lastTweetItem.getId());
+		}
+	}
+
+
 }

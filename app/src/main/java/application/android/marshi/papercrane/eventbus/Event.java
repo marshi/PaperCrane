@@ -11,6 +11,7 @@ import lombok.Getter;
 public enum Event {
 
 	LoginAuthorization,
-	GetTweetList
+	GetTweetList,
+	ShowToast
 
 }
