@@ -1,11 +1,10 @@
 package application.android.marshi.papercrane.domain.usecase.timeline;
 
-import android.util.Log;
 import application.android.marshi.papercrane.domain.model.TweetItem;
-import application.android.marshi.papercrane.domain.usecase.UseCase;
-import application.android.marshi.papercrane.eventbus.Event;
-import application.android.marshi.papercrane.eventbus.EventBusBroker;
+import application.android.marshi.papercrane.domain.usecase.UseCase2;
 import application.android.marshi.papercrane.repository.TweetRepository;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import twitter4j.Paging;
 import twitter4j.TwitterException;
 import twitter4j.auth.AccessToken;
@@ -16,7 +15,7 @@ import java.util.List;
 /**
  * @author marshi on 2016/04/09.
  */
-public class GetTimelineUseCase extends UseCase<GetTimelineUseCase.TimelineRequest> {
+public class GetTimelineUseCase extends UseCase2<GetTimelineUseCase.TimelineRequest, List<TweetItem>> {
 
 	@Inject
 	public GetTimelineUseCase(){}
@@ -24,44 +23,20 @@ public class GetTimelineUseCase extends UseCase<GetTimelineUseCase.TimelineReque
 	@Inject
 	TweetRepository tweetRepository;
 
-	@Override
-	protected void call(TimelineRequest request) {
+	public List<TweetItem> call(TimelineRequest request) throws TwitterException {
 		List<TweetItem> tweetItemList;
-		try {
-			tweetItemList = tweetRepository.getTweetItemList(request.getAccessToken(), request.getPaging());
-		} catch (TwitterException e) {
-			if (e.getStatusCode() == TwitterException.TOO_MANY_REQUESTS) {
-				EventBusBroker.stringEventBus.set(
-						Event.ShowToast,
-						"リクエスト上限数に達しました。しばらく時間をあけてから再度取得してください。"
-				);
-			}
-			return;
-		} catch (Exception e) {
-			Log.e("error", e.toString());
-			return;
-		}
-		EventBusBroker.tweetListEventBus.set(Event.GetTweetList, tweetItemList);
+		tweetItemList = tweetRepository.getTweetItemList(request.getAccessToken(), request.getPaging());
+		return tweetItemList;
 	}
 
+	@Getter
+	@AllArgsConstructor
 	public static class TimelineRequest {
 
 		private AccessToken accessToken;
 
 		private Paging paging;
 
-		public TimelineRequest(AccessToken accessToken, Paging paging) {
-			this.accessToken = accessToken;
-			this.paging = paging;
-		}
-
-		public AccessToken getAccessToken() {
-			return accessToken;
-		}
-
-		public Paging getPaging() {
-			return paging;
-		}
 	}
 
 }

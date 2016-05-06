@@ -1,4 +1,4 @@
-package application.android.marshi.papercrane.presenter.auth;
+package application.android.marshi.papercrane.service.auth;
 
 import android.net.Uri;
 import android.support.annotation.Nullable;
@@ -10,13 +10,13 @@ import javax.inject.Inject;
 /**
  * @author marshi on 2016/04/17.
  */
-public class AccessTokenPresenter {
+public class AccessTokenService {
 
 	@Inject
 	AccessTokenManageUseCase accessTokenManageUseCase;
 
 	@Inject
-	public AccessTokenPresenter() {}
+	public AccessTokenService() {}
 
 	public void saveAccessToken(Uri uri) {
 		accessTokenManageUseCase.start(uri);

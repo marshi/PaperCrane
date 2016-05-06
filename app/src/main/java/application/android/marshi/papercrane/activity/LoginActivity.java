@@ -14,8 +14,8 @@ import application.android.marshi.papercrane.databinding.ActivityLoginBinding;
 import application.android.marshi.papercrane.di.App;
 import application.android.marshi.papercrane.eventbus.Event;
 import application.android.marshi.papercrane.eventbus.EventBusBroker;
-import application.android.marshi.papercrane.presenter.auth.AccessTokenPresenter;
-import application.android.marshi.papercrane.presenter.auth.TwitterAuthorizationPresenter;
+import application.android.marshi.papercrane.service.auth.AccessTokenService;
+import application.android.marshi.papercrane.service.auth.TwitterAuthorizationService;
 
 import javax.inject.Inject;
 
@@ -28,10 +28,10 @@ public class LoginActivity extends AppCompatActivity {
 	private ActivityLoginBinding activityLoginBinding;
 
 	@Inject
-	TwitterAuthorizationPresenter authorizationPresenter;
+	TwitterAuthorizationService authorizationPresenter;
 
 	@Inject
-	AccessTokenPresenter accessTokenPresenter;
+	AccessTokenService accessTokenService;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
