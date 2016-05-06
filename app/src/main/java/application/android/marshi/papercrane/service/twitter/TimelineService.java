@@ -33,11 +33,16 @@ public class TimelineService {
 	private Action1<Throwable> onError(Activity activity) {
 		return throwable -> {
 			if (throwable instanceof TwitterException) {
-				Toast.makeText(
+				TwitterException e = (TwitterException) throwable;
+				if (e.getStatusCode() == TwitterException.TOO_MANY_REQUESTS) {
+					Toast.makeText(
 						activity,
 						"リクエスト上限数に達しました。しばらく時間をあけてから再度取得してください。",
 						Toast.LENGTH_LONG
-				).show();
+					).show();
+					return;
+				}
+				Log.e("", "error", throwable);
 			} else {
 				Log.e("", "error", throwable);
 			}
