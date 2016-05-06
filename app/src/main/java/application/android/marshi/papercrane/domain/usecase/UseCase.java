@@ -1,19 +1,27 @@
 package application.android.marshi.papercrane.domain.usecase;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import rx.Observable;
+import twitter4j.TwitterException;
 
 /**
- * @author marshi on 2016/04/09.
+ * 非同期処理.
+ * 処理結果はsubscribeして使う.
+ * @author marshi on 2016/05/06.
  */
-public abstract class UseCase<T> {
+abstract public class UseCase<P, R> {
 
-	private ExecutorService mExecutorService = Executors.newSingleThreadExecutor();
+	abstract protected R call(P param) throws TwitterException;
 
-	public void start(final T param) {
-		mExecutorService.submit(() -> call(param));
+	public Observable<R> start(P param) {
+		return Observable.create(subscriber -> {
+			R result = null;
+			try {
+				result = call(param);
+			} catch (TwitterException e) {
+				subscriber.onError(e);
+			}
+			subscriber.onNext(result);
+			subscriber.onCompleted();
+		});
 	}
-
-	abstract protected void call(T param);
-
 }

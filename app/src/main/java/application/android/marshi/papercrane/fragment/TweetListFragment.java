@@ -4,26 +4,20 @@ import android.databinding.DataBindingUtil;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 import application.android.marshi.papercrane.BindingHolder;
 import application.android.marshi.papercrane.R;
 import application.android.marshi.papercrane.databinding.FragmentTweetListBinding;
 import application.android.marshi.papercrane.databinding.TweetItemBinding;
 import application.android.marshi.papercrane.di.App;
 import application.android.marshi.papercrane.domain.model.TweetItem;
-import application.android.marshi.papercrane.eventbus.Event;
-import application.android.marshi.papercrane.eventbus.EventBusBroker;
 import application.android.marshi.papercrane.service.auth.AccessTokenService;
 import application.android.marshi.papercrane.service.twitter.TimelineService;
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.subscriptions.CompositeSubscription;
+import com.trello.rxlifecycle.components.RxFragment;
 import twitter4j.auth.AccessToken;
 
 import javax.inject.Inject;
@@ -33,16 +27,13 @@ import java.util.List;
 /**
  * A fragment representing a list of Items.
  */
-public class TweetListFragment extends Fragment {
+public class TweetListFragment extends RxFragment {
 
 	// TODO: Customize parameter argument names
-	private static final String ARG_COLUMN_COUNT = "column-count";
 
 	private FragmentTweetListBinding fragmentTweetListBinding;
 
 	private TweetRecyclerViewAdapter tweetRecyclerViewAdapter;
-
-	private CompositeSubscription subscriptions = new CompositeSubscription();
 
 	@Inject
 	AccessTokenService accessTokenService;
@@ -55,7 +46,6 @@ public class TweetListFragment extends Fragment {
 	public static TweetListFragment newInstance(int columnCount) {
 		TweetListFragment fragment = new TweetListFragment();
 		Bundle args = new Bundle();
-		args.putInt(ARG_COLUMN_COUNT, columnCount);
 		fragment.setArguments(args);
 		return fragment;
 	}
@@ -64,8 +54,7 @@ public class TweetListFragment extends Fragment {
 	 * Mandatory empty constructor for the fragment manager to instantiate the
 	 * fragment (e.g. upon screen orientation changes).
 	 */
-	public TweetListFragment() {
-	}
+	public TweetListFragment() {}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -87,48 +76,29 @@ public class TweetListFragment extends Fragment {
 		AccessToken accessToken = accessTokenService.getAccessToken();
 		//swipe to refresh で最新ツイートを取得.
 		fragmentTweetListBinding.swipeRefreshLayout.setOnRefreshListener(() ->
-				timelineService.loadLatestTweetItems(
-						getActivity(),
-						accessToken,
-						tweetRecyclerViewAdapter.mValues.get(0).getId(),
-						tweetItems -> {
-							tweetRecyclerViewAdapter.addFirst(tweetItems);
-							fragmentTweetListBinding.swipeRefreshLayout.setRefreshing(false);
-						}
-				)
-		);
-		//イベント登録
-		registerEvents();
-
-		timelineService.loadTweetItems(
-				getActivity(),
+			timelineService.loadLatestTweetItems(
+				this,
 				accessToken,
-				tweetItemList -> tweetRecyclerViewAdapter.addLast(tweetItemList)
+				tweetRecyclerViewAdapter.mValues.get(0).getId(),
+				tweetItems -> {
+					tweetRecyclerViewAdapter.addFirst(tweetItems);
+					fragmentTweetListBinding.swipeRefreshLayout.setRefreshing(false);
+				}
+			)
 		);
 	}
 
 	@Override
 	public void onResume() {
 		super.onResume();
-		if (subscriptions.isUnsubscribed()) {
-			registerEvents();
+		AccessToken accessToken = accessTokenService.getAccessToken();
+		if (tweetRecyclerViewAdapter.mValues.isEmpty()) {
+			timelineService.loadTweetItems(
+				this,
+				accessToken,
+				tweetItemList -> tweetRecyclerViewAdapter.addLast(tweetItemList)
+			);
 		}
-	}
-
-	@Override
-	public void onPause() {
-		super.onPause();
-		subscriptions.unsubscribe();
-	}
-
-	private void registerEvents() {
-		Subscription s3 = EventBusBroker.stringEventBus.get(Event.ShowToast)
-				.observeOn(AndroidSchedulers.mainThread())
-				.subscribe(text -> {
-							Toast.makeText(this.getActivity(), text, Toast.LENGTH_LONG).show();
-						}
-				);
-		subscriptions.add(s3);
 	}
 
 	private void configureTweetRecyclerView() {
@@ -137,12 +107,14 @@ public class TweetListFragment extends Fragment {
 		LinearLayoutManager layoutManager = new LinearLayoutManager(this.getActivity());
 		recyclerView.setLayoutManager(layoutManager);
 		recyclerView.addItemDecoration(new TweetRecyclerViewItemDecoration());
-		recyclerView.addOnScrollListener(new InfinityScrollListener(layoutManager));
+		recyclerView.addOnScrollListener(new InfinityScrollListener(this, layoutManager));
 		tweetRecyclerViewAdapter = new TweetRecyclerViewAdapter(new LinkedList<>());
 		recyclerView.setAdapter(tweetRecyclerViewAdapter);
 	}
 
-
+	/**
+	 * tweetデータ保持用Adapter
+	 */
 	private class TweetRecyclerViewAdapter extends RecyclerView.Adapter<BindingHolder<TweetItemBinding>> {
 
 		private final LinkedList<TweetItem> mValues;
@@ -202,10 +174,12 @@ public class TweetListFragment extends Fragment {
 	 */
 	private class InfinityScrollListener extends RecyclerView.OnScrollListener {
 
+		private RxFragment rxFragment;
 		private int previousTotalItemCount = 0;
 		private LinearLayoutManager linearLayoutManager;
 
-		public InfinityScrollListener(LinearLayoutManager linearLayoutManager) {
+		public InfinityScrollListener(RxFragment fragment, LinearLayoutManager linearLayoutManager) {
+			this.rxFragment = fragment;
 			this.linearLayoutManager = linearLayoutManager;
 		}
 
@@ -223,10 +197,10 @@ public class TweetListFragment extends Fragment {
 
 		private void onLoadMore(TweetItem lastTweetItem) {
 			timelineService.loadTweetItems(
-					getActivity(),
-					accessTokenService.getAccessToken(),
-					lastTweetItem.getId(),
-					tweetItems -> tweetRecyclerViewAdapter.addLast(tweetItems)
+				rxFragment,
+				accessTokenService.getAccessToken(),
+				lastTweetItem.getId(),
+				tweetItems -> tweetRecyclerViewAdapter.addLast(tweetItems)
 			);
 		}
 	}

@@ -16,9 +16,7 @@ public class TwitterAuthRepository {
 	private static Twitter twitter;
 
 	static {
-		if (twitter == null) {
-			twitter = TwitterClient.getInstance();
-		}
+		twitter = TwitterClient.getInstance();
 	}
 
 	@Inject

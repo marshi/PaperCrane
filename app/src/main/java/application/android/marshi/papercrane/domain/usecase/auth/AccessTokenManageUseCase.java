@@ -11,7 +11,7 @@ import javax.inject.Inject;
 /**
  * @author marshi on 2016/04/17.
  */
-public class AccessTokenManageUseCase extends UseCase<Uri> {
+public class AccessTokenManageUseCase extends UseCase<Uri, Void> {
 
 	@Inject
 	AccessTokenRepository accessTokenRepository;
@@ -24,11 +24,12 @@ public class AccessTokenManageUseCase extends UseCase<Uri> {
 	}
 
 	@Override
-	protected void call(Uri param) {
+	protected Void call(Uri param) {
 		String oauthVerifier = param.getQueryParameter("oauth_verifier");
 		TwitterAuthRepository twitterAuthRepository = new TwitterAuthRepository();
 		AccessToken accessToken = twitterAuthRepository.fetchAccessToken(oauthVerifier);
 		accessTokenRepository.setAccessToken(accessToken);
+		return null;
 	}
 
 }

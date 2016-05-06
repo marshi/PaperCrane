@@ -17,7 +17,8 @@ public class MainActivity extends AppCompatActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		((App)getApplication()).getApplicationComponent().inject(this);
-		if (login()) {
+		boolean login = login();
+		if (login) {
 			Intent intent = new Intent(getApplicationContext(), HomeTimelineActivity.class);
 			startActivity(intent);
 		} else {

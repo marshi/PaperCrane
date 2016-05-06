@@ -2,9 +2,7 @@ package application.android.marshi.papercrane.activity;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.content.Intent;
 import android.databinding.DataBindingUtil;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -12,8 +10,6 @@ import android.widget.Button;
 import application.android.marshi.papercrane.R;
 import application.android.marshi.papercrane.databinding.ActivityLoginBinding;
 import application.android.marshi.papercrane.di.App;
-import application.android.marshi.papercrane.eventbus.Event;
-import application.android.marshi.papercrane.eventbus.EventBusBroker;
 import application.android.marshi.papercrane.service.auth.AccessTokenService;
 import application.android.marshi.papercrane.service.auth.TwitterAuthorizationService;
 
@@ -28,7 +24,7 @@ public class LoginActivity extends AppCompatActivity {
 	private ActivityLoginBinding activityLoginBinding;
 
 	@Inject
-	TwitterAuthorizationService authorizationPresenter;
+	TwitterAuthorizationService authorizationService;
 
 	@Inject
 	AccessTokenService accessTokenService;
@@ -39,12 +35,9 @@ public class LoginActivity extends AppCompatActivity {
 		((App)getApplication()).getApplicationComponent().inject(this);
 		activityLoginBinding =  DataBindingUtil.setContentView(this, R.layout.activity_login);
 		Button mEmailSignInButton = activityLoginBinding.emailSignInButton;
-		EventBusBroker.stringEventBus.get(Event.LoginAuthorization).subscribe(
-				authUrl -> startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(authUrl)))
-		);
 		mEmailSignInButton.setOnClickListener(view -> {
 			progress();
-			authorizationPresenter.oAuthLogin();
+			authorizationService.oAuthLogin(this);
 		});
 	}
 
