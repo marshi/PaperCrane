@@ -3,10 +3,10 @@ package application.android.marshi.papercrane.activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import application.android.marshi.papercrane.R;
 import application.android.marshi.papercrane.di.App;
-import application.android.marshi.papercrane.presenter.auth.AccessTokenPresenter;
+import application.android.marshi.papercrane.service.auth.AccessTokenService;
+import android.support.v7.app.AppCompatActivity;
 
 import javax.inject.Inject;
 
@@ -17,7 +17,7 @@ import javax.inject.Inject;
 public class HomeTimelineActivity extends AppCompatActivity {
 
 	@Inject
-	AccessTokenPresenter accessTokenPresenter;
+	AccessTokenService accessTokenService;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -28,7 +28,7 @@ public class HomeTimelineActivity extends AppCompatActivity {
 		String action = intent.getAction();
 		if (action != null && Intent.ACTION_VIEW.equals(action)) {
 			Uri uri = intent.getData();
-			accessTokenPresenter.saveAccessToken(uri);
+			accessTokenService.saveAccessToken(uri);
 		}
 
 	}

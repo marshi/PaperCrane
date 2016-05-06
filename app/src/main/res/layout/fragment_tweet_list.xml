@@ -5,11 +5,17 @@
 				xmlns:app="http://schemas.android.com/apk/res-auto"
 >
 
-	<android.support.v7.widget.RecyclerView
-					android:id="@+id/fragment_tweet_list"
+	<android.support.v4.widget.SwipeRefreshLayout
+					android:id="@+id/swipe_refresh_layout"
 					android:layout_width="match_parent"
-					android:layout_height="match_parent"
-					android:layout_marginLeft="16dp"
-					android:layout_marginRight="16dp"
-	/>
+					android:layout_height="wrap_content"
+	>
+		<android.support.v7.widget.RecyclerView
+						android:id="@+id/tweet_recycler_view"
+						android:layout_width="match_parent"
+						android:layout_height="match_parent"
+						android:layout_marginLeft="16dp"
+						android:layout_marginRight="16dp"
+		/>
+	</android.support.v4.widget.SwipeRefreshLayout>
 </layout>
