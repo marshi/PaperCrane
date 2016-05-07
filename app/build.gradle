@@ -4,17 +4,21 @@ apply plugin: 'android-apt'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "23.0.2"
+    buildToolsVersion "23.0.3"
     dataBinding {
         enabled = true
     }
 
     defaultConfig {
         applicationId "application.android.marshi.papercrane"
-        minSdkVersion 21
-        targetSdkVersion 22
+        minSdkVersion 16
+        targetSdkVersion 23
         versionCode 1
         versionName "1.0"
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
     buildTypes {
         debug {
@@ -31,25 +35,20 @@ android {
         }
     }
 
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-
 }
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
     provided "org.projectlombok:lombok:1.16.8"
-    compile 'com.android.support:appcompat-v7:23.3.0'
-    compile 'com.android.support:support-v4:23.3.0'
-    compile 'com.android.support:design:23.3.0'
+    compile "com.android.support:appcompat-v7:${supportLibVersion}"
+    compile "com.android.support:support-v4:${supportLibVersion}"
+    compile "com.android.support:design:${supportLibVersion}"
+    compile "com.android.support:recyclerview-v7:${supportLibVersion}"
     compile 'io.reactivex:rxjava:1.1.2'
     compile 'io.reactivex:rxandroid:1.2.0'
     compile 'com.trello:rxlifecycle:0.5.0'
     compile 'com.trello:rxlifecycle-components:0.5.0'
-    compile 'com.android.support:recyclerview-v7:23.3.0'
     compile 'com.squareup.retrofit2:retrofit:2.0.1'
     compile 'com.google.android.gms:play-services-appindexing:8.1.0'
     compile 'org.twitter4j:twitter4j-core:4.0.4'
