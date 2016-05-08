@@ -37,7 +37,8 @@
 		<activity
 						android:name=".activity.HomeTimelineActivity"
 						android:launchMode="singleInstance"
-						android:theme="@style/AppTheme.NoActionBar">
+						android:theme="@style/AppTheme.NoActionBar"
+		>
 			<intent-filter>
 				<action android:name="android.intent.action.VIEW"/>
 				<category android:name="android.intent.category.DEFAULT"/>

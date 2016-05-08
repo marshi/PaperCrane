@@ -11,7 +11,7 @@ android {
 
     defaultConfig {
         applicationId "application.android.marshi.papercrane"
-        minSdkVersion 16
+        minSdkVersion 21
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"

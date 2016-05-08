@@ -75,7 +75,11 @@ public class TweetListFragment extends RxFragment {
 
 		AccessToken accessToken = accessTokenService.getAccessToken();
 		//swipe to refresh で最新ツイートを取得.
-		fragmentTweetListBinding.swipeRefreshLayout.setOnRefreshListener(() ->
+		fragmentTweetListBinding.swipeRefreshLayout.setOnRefreshListener(() -> {
+			if (tweetRecyclerViewAdapter.mValues.isEmpty()) {
+				fragmentTweetListBinding.swipeRefreshLayout.setRefreshing(false);
+				return;
+			}
 			timelineService.loadLatestTweetItems(
 				this,
 				accessToken,
@@ -84,8 +88,8 @@ public class TweetListFragment extends RxFragment {
 					tweetRecyclerViewAdapter.addFirst(tweetItems);
 					fragmentTweetListBinding.swipeRefreshLayout.setRefreshing(false);
 				}
-			)
-		);
+			);
+		});
 	}
 
 	@Override
