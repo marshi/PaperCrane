@@ -90,7 +90,8 @@ public class TweetListFragment extends RxFragment {
 				tweetItems -> {
 					tweetRecyclerViewAdapter.addFirst(tweetItems);
 					swipeRefreshLayout.setRefreshing(false);
-				}
+				},
+				() -> swipeRefreshLayout.setRefreshing(false)
 			);
 		});
 	}

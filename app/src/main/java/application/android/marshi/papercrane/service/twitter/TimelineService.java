@@ -7,6 +7,7 @@ import application.android.marshi.papercrane.domain.model.TweetItem;
 import application.android.marshi.papercrane.domain.usecase.timeline.GetTimelineUseCase;
 import com.trello.rxlifecycle.components.RxFragment;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action0;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 import twitter4j.Paging;
@@ -30,8 +31,11 @@ public class TimelineService {
 	@Inject
 	GetTimelineUseCase getTimelineUseCase;
 
-	private Action1<Throwable> onError(Activity activity) {
+	private Action1<Throwable> onError(Activity activity, Action0 onError) {
 		return throwable -> {
+			if (onError != null) {
+				onError.call();
+			}
 			if (throwable instanceof TwitterException) {
 				TwitterException e = (TwitterException) throwable;
 				if (e.getStatusCode() == TwitterException.TOO_MANY_REQUESTS) {
@@ -49,27 +53,27 @@ public class TimelineService {
 		};
 	}
 
-	private void loadTweetItems(RxFragment fragment, AccessToken accessToken, Paging paging, Action1<List<TweetItem>> onNext) {
+	private void loadTweetItems(RxFragment fragment, AccessToken accessToken, Paging paging, Action1<List<TweetItem>> onNext, Action0 onError) {
 		getTimelineUseCase.start(new TimelineRequest(accessToken, paging))
 				.observeOn(AndroidSchedulers.mainThread())
 				.subscribeOn(Schedulers.computation())
 				.compose(fragment.bindToLifecycle())
-				.subscribe(onNext, onError(fragment.getActivity()));
+				.subscribe(onNext, onError(fragment.getActivity(), onError));
 	}
 
 	public void loadTweetItems(RxFragment fragment, AccessToken accessToken, Action1<List<TweetItem>> onNext) {
 		Paging paging = new Paging(1);
-		loadTweetItems(fragment, accessToken, paging, onNext);
+		loadTweetItems(fragment, accessToken, paging, onNext, null);
 	}
 
 	public void loadTweetItems(RxFragment fragment, AccessToken accessToken, long maxId, Action1<List<TweetItem>> onNext) {
 		Paging paging = new Paging().maxId(maxId - 1).count(20);
-		loadTweetItems(fragment, accessToken, paging, onNext);
+		loadTweetItems(fragment, accessToken, paging, onNext, null);
 	}
 
-	public void loadLatestTweetItems(RxFragment fragment, AccessToken accessToken, long sinceId, Action1<List<TweetItem>> onNext) {
+	public void loadLatestTweetItems(RxFragment fragment, AccessToken accessToken, long sinceId, Action1<List<TweetItem>> onNext, Action0 onError) {
 		Paging paging = new Paging().sinceId(sinceId).count(20);
-		loadTweetItems(fragment, accessToken, paging, onNext);
+		loadTweetItems(fragment, accessToken, paging, onNext, onError);
 	}
 
 }
