@@ -79,14 +79,10 @@ public class TweetListFragment extends RxFragment {
 		fragmentTweetListBinding.swipeRefreshLayout.setOnRefreshListener(() -> {
 			SwipeRefreshLayout swipeRefreshLayout = fragmentTweetListBinding.swipeRefreshLayout;
 			swipeRefreshLayout.setColorSchemeResources(R.color.theme500);
-			if (tweetRecyclerViewAdapter.mValues.isEmpty()) {
-				swipeRefreshLayout.setRefreshing(false);
-				return;
-			}
 			timelineService.loadLatestTweetItems(
 				this,
 				accessToken,
-				tweetRecyclerViewAdapter.mValues.get(0).getId(),
+				tweetRecyclerViewAdapter.mValues.isEmpty() ? null : tweetRecyclerViewAdapter.mValues.get(0).getId(),
 				tweetItems -> {
 					tweetRecyclerViewAdapter.addFirst(tweetItems);
 					swipeRefreshLayout.setRefreshing(false);

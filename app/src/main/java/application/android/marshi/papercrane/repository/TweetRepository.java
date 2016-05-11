@@ -37,10 +37,13 @@ public class TweetRepository {
 	private TweetItem convertFrom(Status status) {
 		User user = status.getUser();
 		return new TweetItem(
-				status.getId(),
-				status.getText(),
-				user.getName(),
-				user.getProfileImageURL());
+			status.getId(),
+			"@" + user.getScreenName(),
+			status.getText(),
+			user.getName(),
+			user.getProfileImageURL(),
+			status.getCreatedAt()
+		);
 	}
 
 }

@@ -33,14 +33,37 @@
 		/>
 
 		<TextView
+						android:id="@+id/user_id"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_marginStart="10dp"
+						android:layout_toEndOf="@id/user_name"
+		        android:text="@{tweet.userId}"
+		/>
+
+		<TextView
 						android:id="@+id/content"
 						android:layout_width="wrap_content"
 						android:layout_height="wrap_content"
 						android:layout_marginTop="@dimen/text_margin"
 						android:textAppearance="?attr/textAppearanceListItem"
 						android:layout_alignStart="@id/user_name"
+						android:autoLink="web"
+						android:textColorLink="@color/theme500"
 						android:text="@{tweet.content}"
 		/>
+
+		<TextView
+						android:id="@+id/tweetAt"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:textAppearance="?attr/textAppearanceListItem"
+						android:layout_below="@id/content"
+						android:layout_alignParentEnd="true"
+						android:textSize="@dimen/tweet_at"
+						app:tweetTime="@{tweet.tweetAt}"
+		/>
+
 	</RelativeLayout>
 
 </layout>

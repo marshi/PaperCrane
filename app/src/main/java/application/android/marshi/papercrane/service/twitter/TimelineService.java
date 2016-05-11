@@ -71,8 +71,13 @@ public class TimelineService {
 		loadTweetItems(fragment, accessToken, paging, onNext, null);
 	}
 
-	public void loadLatestTweetItems(RxFragment fragment, AccessToken accessToken, long sinceId, Action1<List<TweetItem>> onNext, Action0 onError) {
-		Paging paging = new Paging().sinceId(sinceId).count(20);
+	public void loadLatestTweetItems(RxFragment fragment, AccessToken accessToken, Long sinceId, Action1<List<TweetItem>> onNext, Action0 onError) {
+		Paging paging;
+		if (sinceId != null) {
+			paging = new Paging().sinceId(sinceId).count(20);
+		} else {
+			paging = new Paging().count(20);
+		}
 		loadTweetItems(fragment, accessToken, paging, onNext, onError);
 	}
 
