@@ -4,6 +4,7 @@ import android.databinding.DataBindingUtil;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -75,17 +76,20 @@ public class TweetListFragment extends RxFragment {
 
 		AccessToken accessToken = accessTokenService.getAccessToken();
 		//swipe to refresh で最新ツイートを取得.
-		fragmentTweetListBinding.swipeRefreshLayout.setOnRefreshListener(() ->
+		fragmentTweetListBinding.swipeRefreshLayout.setOnRefreshListener(() -> {
+			SwipeRefreshLayout swipeRefreshLayout = fragmentTweetListBinding.swipeRefreshLayout;
+			swipeRefreshLayout.setColorSchemeResources(R.color.theme500);
 			timelineService.loadLatestTweetItems(
 				this,
 				accessToken,
-				tweetRecyclerViewAdapter.mValues.get(0).getId(),
+				tweetRecyclerViewAdapter.mValues.isEmpty() ? null : tweetRecyclerViewAdapter.mValues.get(0).getId(),
 				tweetItems -> {
 					tweetRecyclerViewAdapter.addFirst(tweetItems);
-					fragmentTweetListBinding.swipeRefreshLayout.setRefreshing(false);
-				}
-			)
-		);
+					swipeRefreshLayout.setRefreshing(false);
+				},
+				() -> swipeRefreshLayout.setRefreshing(false)
+			);
+		});
 	}
 
 	@Override
