@@ -10,7 +10,7 @@ import application.android.marshi.papercrane.di.module.AppModule;
  */
 public class App extends Application {
 
-	private AppComponent appComponent;
+	private static AppComponent appComponent;
 
     @Override
     public void onCreate() {
@@ -24,7 +24,7 @@ public class App extends Application {
                 .build();
     }
 
-    public AppComponent getApplicationComponent() {
+    public static AppComponent getApplicationComponent() {
         return appComponent;
     }
 }

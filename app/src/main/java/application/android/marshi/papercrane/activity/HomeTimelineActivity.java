@@ -1,12 +1,13 @@
 package application.android.marshi.papercrane.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import application.android.marshi.papercrane.R;
 import application.android.marshi.papercrane.di.App;
 import application.android.marshi.papercrane.service.auth.AccessTokenService;
-import android.support.v7.app.AppCompatActivity;
 
 import javax.inject.Inject;
 
@@ -18,6 +19,11 @@ public class HomeTimelineActivity extends AppCompatActivity {
 
 	@Inject
 	AccessTokenService accessTokenService;
+
+	public static void startActivity(Context context) {
+		Intent intent = new Intent(context, HomeTimelineActivity.class);
+		context.startActivity(intent);
+	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
