@@ -16,9 +16,10 @@ import application.android.marshi.papercrane.databinding.FragmentTweetListBindin
 import application.android.marshi.papercrane.databinding.TweetItemBinding;
 import application.android.marshi.papercrane.di.App;
 import application.android.marshi.papercrane.domain.model.TweetItem;
+import application.android.marshi.papercrane.enums.TweetPage;
 import application.android.marshi.papercrane.service.auth.AccessTokenService;
 import application.android.marshi.papercrane.service.twitter.TimelineService;
-import com.trello.rxlifecycle.components.RxFragment;
+import com.trello.rxlifecycle.components.support.RxFragment;
 import twitter4j.auth.AccessToken;
 
 import javax.inject.Inject;
@@ -42,11 +43,14 @@ public class TweetListFragment extends RxFragment {
 	@Inject
 	TimelineService timelineService;
 
+	private TweetPage tweetPage;
+
 	// TODO: Customize parameter initialization
 	@SuppressWarnings("unused")
-	public static TweetListFragment newInstance(int columnCount) {
+	public static TweetListFragment newInstance(TweetPage tweetPage) {
 		TweetListFragment fragment = new TweetListFragment();
 		Bundle args = new Bundle();
+		args.putInt(TweetPage.BUNDLE_KEY, tweetPage.getCode());
 		fragment.setArguments(args);
 		return fragment;
 	}
@@ -60,7 +64,7 @@ public class TweetListFragment extends RxFragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		((App) (getActivity().getApplication())).getApplicationComponent().inject(this);
+		App.getApplicationComponent().inject(this);
 	}
 
 	@Override
@@ -73,7 +77,11 @@ public class TweetListFragment extends RxFragment {
 	public void onActivityCreated(@Nullable Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		configureTweetRecyclerView();
-
+		Bundle args = getArguments();
+		if (args != null) {
+			int code = args.getInt(TweetPage.BUNDLE_KEY);
+			this.tweetPage = TweetPage.from(code);
+		}
 		AccessToken accessToken = accessTokenService.getAccessToken();
 		//swipe to refresh で最新ツイートを取得.
 		fragmentTweetListBinding.swipeRefreshLayout.setOnRefreshListener(() -> {
@@ -83,6 +91,7 @@ public class TweetListFragment extends RxFragment {
 				this,
 				accessToken,
 				tweetRecyclerViewAdapter.mValues.isEmpty() ? null : tweetRecyclerViewAdapter.mValues.get(0).getId(),
+				tweetPage,
 				tweetItems -> {
 					tweetRecyclerViewAdapter.addFirst(tweetItems);
 					swipeRefreshLayout.setRefreshing(false);
@@ -100,6 +109,7 @@ public class TweetListFragment extends RxFragment {
 			timelineService.loadTweetItems(
 				this,
 				accessToken,
+				tweetPage,
 				tweetItemList -> tweetRecyclerViewAdapter.addLast(tweetItemList)
 			);
 		}
@@ -114,6 +124,12 @@ public class TweetListFragment extends RxFragment {
 		recyclerView.addOnScrollListener(new InfinityScrollListener(this, layoutManager));
 		tweetRecyclerViewAdapter = new TweetRecyclerViewAdapter(new LinkedList<>());
 		recyclerView.setAdapter(tweetRecyclerViewAdapter);
+	}
+
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putInt(TweetPage.BUNDLE_KEY, this.tweetPage.getCode());
 	}
 
 	/**
@@ -204,6 +220,7 @@ public class TweetListFragment extends RxFragment {
 				rxFragment,
 				accessTokenService.getAccessToken(),
 				lastTweetItem.getId(),
+				tweetPage,
 				tweetItems -> tweetRecyclerViewAdapter.addLast(tweetItems)
 			);
 		}

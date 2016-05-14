@@ -2,6 +2,7 @@ package application.android.marshi.papercrane.domain.usecase.timeline;
 
 import application.android.marshi.papercrane.domain.model.TweetItem;
 import application.android.marshi.papercrane.domain.usecase.UseCase;
+import application.android.marshi.papercrane.enums.TweetPage;
 import application.android.marshi.papercrane.repository.TweetRepository;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,7 +26,7 @@ public class GetTimelineUseCase extends UseCase<GetTimelineUseCase.TimelineReque
 
 	protected List<TweetItem> call(TimelineRequest request) throws TwitterException {
 		List<TweetItem> tweetItemList;
-		tweetItemList = tweetRepository.getTweetItemList(request.getAccessToken(), request.getPaging());
+		tweetItemList = tweetRepository.getTweetItemList(request.getAccessToken(), request.getPaging(), request.getType());
 		return tweetItemList;
 	}
 
@@ -36,6 +37,8 @@ public class GetTimelineUseCase extends UseCase<GetTimelineUseCase.TimelineReque
 		private AccessToken accessToken;
 
 		private Paging paging;
+
+		private TweetPage type;
 
 	}
 

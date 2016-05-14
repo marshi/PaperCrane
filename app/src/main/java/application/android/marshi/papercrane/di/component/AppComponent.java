@@ -1,6 +1,6 @@
 package application.android.marshi.papercrane.di.component;
 
-import application.android.marshi.papercrane.activity.HomeTimelineActivity;
+import application.android.marshi.papercrane.activity.TimelineActivity;
 import application.android.marshi.papercrane.activity.LoginActivity;
 import application.android.marshi.papercrane.activity.MainActivity;
 import application.android.marshi.papercrane.di.module.AppModule;
@@ -21,7 +21,7 @@ public interface AppComponent {
 
 	void inject(LoginActivity loginActivity);
 
-	void inject(HomeTimelineActivity homeTimelineActivity);
+	void inject(TimelineActivity timelineActivity);
 
 	void inject(TweetListFragment tweetListFragment);
 }

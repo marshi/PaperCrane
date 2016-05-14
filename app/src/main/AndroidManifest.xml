@@ -35,7 +35,7 @@
 		</activity>
 
 		<activity
-						android:name=".activity.HomeTimelineActivity"
+						android:name=".activity.TimelineActivity"
 						android:launchMode="singleInstance"
 						android:theme="@style/AppTheme.NoActionBar"
 		>
