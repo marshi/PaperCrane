@@ -28,6 +28,4 @@ public class MainActivity extends AppCompatActivity {
 		return accessTokenService.getAccessToken() != null;
 	}
 
-
-
 }

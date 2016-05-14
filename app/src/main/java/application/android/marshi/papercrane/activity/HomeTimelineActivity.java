@@ -29,7 +29,7 @@ public class HomeTimelineActivity extends AppCompatActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_tweet_list);
-		((App)getApplication()).getApplicationComponent().inject(this);
+		App.getApplicationComponent().inject(this);
 		Intent intent = getIntent();
 		String action = intent.getAction();
 		if (action != null && Intent.ACTION_VIEW.equals(action)) {
