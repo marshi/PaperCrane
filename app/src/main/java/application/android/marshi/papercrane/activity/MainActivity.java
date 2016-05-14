@@ -18,7 +18,7 @@ public class MainActivity extends AppCompatActivity {
 		App.getApplicationComponent().inject(this);
 		boolean login = login();
 		if (login) {
-			HomeTimelineActivity.startActivity(this);
+			TimelineActivity.startActivity(this);
 		} else {
 			LoginActivity.startActivity(this);
 		}
