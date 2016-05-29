@@ -104,11 +104,9 @@ public class TweetListFragment extends RxFragment {
 	@Override
 	public void onResume() {
 		super.onResume();
-		AccessToken accessToken = accessTokenService.getAccessToken();
 		if (tweetRecyclerViewAdapter.mValues.isEmpty()) {
-			timelineService.loadTweetItems(
+			timelineService.loadStoredTweets(
 				this,
-				accessToken,
 				tweetPage,
 				tweetItemList -> tweetRecyclerViewAdapter.addLast(tweetItemList)
 			);
