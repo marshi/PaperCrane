@@ -12,6 +12,8 @@ public class TwitterClient {
 
 	private static Twitter twitter;
 
+	private static boolean isVerified = false;
+
 	static {
 		twitter  = TwitterFactory.getSingleton();
 		twitter.setOAuthConsumer(BuildConfig.CONSUMER_KEY, BuildConfig.SECRET_KEY);
@@ -20,8 +22,12 @@ public class TwitterClient {
 	private TwitterClient() { }
 
 	public static Twitter getInstance(AccessToken accessToken) throws TwitterException {
+		if (isVerified) {
+			return twitter;
+		}
 		twitter.setOAuthAccessToken(accessToken);
 		twitter.verifyCredentials();
+		isVerified = true;
 		return twitter;
 	}
 

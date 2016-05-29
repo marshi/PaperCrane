@@ -25,9 +25,7 @@ public class GetTimelineUseCase extends UseCase<GetTimelineUseCase.TimelineReque
 	TweetRepository tweetRepository;
 
 	protected List<TweetItem> call(TimelineRequest request) throws TwitterException {
-		List<TweetItem> tweetItemList;
-		tweetItemList = tweetRepository.getTweetItemList(request.getAccessToken(), request.getPaging(), request.getType());
-		return tweetItemList;
+		return tweetRepository.getTweetItemList(request.getAccessToken(), request.getPaging(), request.getType());
 	}
 
 	@Getter

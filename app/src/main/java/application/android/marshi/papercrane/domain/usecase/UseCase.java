@@ -17,11 +17,11 @@ abstract public class UseCase<P, R> {
 			R result = null;
 			try {
 				result = call(param);
+				subscriber.onNext(result);
+				subscriber.onCompleted();
 			} catch (TwitterException e) {
 				subscriber.onError(e);
 			}
-			subscriber.onNext(result);
-			subscriber.onCompleted();
 		});
 	}
 }
