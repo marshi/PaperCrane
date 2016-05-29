@@ -1,10 +1,10 @@
 package application.android.marshi.papercrane.domain.usecase.timeline;
 
+import application.android.marshi.papercrane.database.Cache;
 import application.android.marshi.papercrane.database.dto.Tweet;
 import application.android.marshi.papercrane.domain.model.TweetItem;
 import application.android.marshi.papercrane.domain.usecase.UseCase;
 import application.android.marshi.papercrane.enums.TweetPage;
-import application.android.marshi.papercrane.repository.TweetStoreRepository;
 import twitter4j.TwitterException;
 
 import javax.inject.Inject;
@@ -21,11 +21,11 @@ public class GetStoredTimelineUseCase extends UseCase<TweetPage, List<TweetItem>
 	public GetStoredTimelineUseCase() {}
 
 	@Inject
-	TweetStoreRepository tweetStoreRepository;
+	Cache cache;
 
 	@Override
 	protected List<TweetItem> call(TweetPage tweetPage) throws TwitterException {
-		List<Tweet> tweets = tweetStoreRepository.selectOrderYByDate(tweetPage);
+		List<Tweet> tweets = cache.get(tweetPage);
 		AbstractList<TweetItem> tweetItemList = new ArrayList<>();
 		for (Tweet tweet : tweets) {
 			tweetItemList.add(

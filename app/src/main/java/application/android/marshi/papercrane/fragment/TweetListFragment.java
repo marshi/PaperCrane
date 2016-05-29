@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 import application.android.marshi.papercrane.BindingHolder;
 import application.android.marshi.papercrane.R;
 import application.android.marshi.papercrane.databinding.FragmentTweetListBinding;
@@ -17,12 +18,17 @@ import application.android.marshi.papercrane.databinding.TweetItemBinding;
 import application.android.marshi.papercrane.di.App;
 import application.android.marshi.papercrane.domain.model.TweetItem;
 import application.android.marshi.papercrane.enums.TweetPage;
+import application.android.marshi.papercrane.repository.LastTweetAccessTimeRepository;
 import application.android.marshi.papercrane.service.auth.AccessTokenService;
 import application.android.marshi.papercrane.service.twitter.TimelineService;
 import com.trello.rxlifecycle.components.support.RxFragment;
+import org.threeten.bp.LocalDateTime;
+import org.threeten.bp.ZoneOffset;
+import org.threeten.bp.temporal.ChronoUnit;
 import twitter4j.auth.AccessToken;
 
 import javax.inject.Inject;
+import java.text.MessageFormat;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -42,6 +48,9 @@ public class TweetListFragment extends RxFragment {
 
 	@Inject
 	TimelineService timelineService;
+
+	@Inject
+	LastTweetAccessTimeRepository lastTweetAccessTimeRepository;
 
 	private TweetPage tweetPage;
 
@@ -83,21 +92,31 @@ public class TweetListFragment extends RxFragment {
 			this.tweetPage = TweetPage.from(code);
 		}
 		AccessToken accessToken = accessTokenService.getAccessToken();
+		//TODO 処理が多くなってきたので整理する
 		//swipe to refresh で最新ツイートを取得.
 		fragmentTweetListBinding.swipeRefreshLayout.setOnRefreshListener(() -> {
 			SwipeRefreshLayout swipeRefreshLayout = fragmentTweetListBinding.swipeRefreshLayout;
 			swipeRefreshLayout.setColorSchemeResources(R.color.theme500);
-			timelineService.loadLatestTweetItems(
-				this,
-				accessToken,
-				tweetRecyclerViewAdapter.mValues.isEmpty() ? null : tweetRecyclerViewAdapter.mValues.get(0).getId(),
-				tweetPage,
-				tweetItems -> {
-					tweetRecyclerViewAdapter.addFirst(tweetItems);
-					swipeRefreshLayout.setRefreshing(false);
-				},
-				() -> swipeRefreshLayout.setRefreshing(false)
-			);
+			LocalDateTime now = LocalDateTime.now();
+			LocalDateTime lastAccessedTime = lastTweetAccessTimeRepository.get();
+			int waitSeconds = 60;
+			if (lastAccessedTime != null &&  lastAccessedTime.isAfter(now.minus(waitSeconds, ChronoUnit.SECONDS))) {
+				swipeRefreshLayout.setRefreshing(false);
+				long diffSec = (now.toEpochSecond(ZoneOffset.UTC) - lastAccessedTime.toEpochSecond(ZoneOffset.UTC));
+				Toast.makeText(this.getActivity(), MessageFormat.format("{0}秒後に取得可能です", waitSeconds - diffSec), Toast.LENGTH_SHORT).show();
+			} else {
+				timelineService.loadLatestTweetItems(
+					this,
+					accessToken,
+					tweetRecyclerViewAdapter.mValues.isEmpty() ? null : tweetRecyclerViewAdapter.mValues.get(0).getId(),
+					tweetPage,
+					tweetItems -> {
+						tweetRecyclerViewAdapter.addFirst(tweetItems);
+						swipeRefreshLayout.setRefreshing(false);
+					},
+					() -> swipeRefreshLayout.setRefreshing(false)
+				);
+			}
 		});
 	}
 

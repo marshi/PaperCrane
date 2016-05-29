@@ -34,6 +34,17 @@ public class TweetStoreRepository {
 		}
 	}
 
+	public List<Tweet> selectOrderYByDate(TweetPage tweetPage, long offset) {
+		return ormaDatabase
+			.relationOfTweet()
+			.selector()
+			.tweetPageEq(tweetPage.name())
+			.orderByTweetAtDesc()
+			.offset(offset)
+			.limit(1000)
+			.toList();
+	}
+
 	public List<Tweet> selectOrderYByDate(TweetPage tweetPage) {
 		return ormaDatabase
 			.relationOfTweet()

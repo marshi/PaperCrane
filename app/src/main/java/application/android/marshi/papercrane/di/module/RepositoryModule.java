@@ -2,6 +2,7 @@ package application.android.marshi.papercrane.di.module;
 
 import android.content.Context;
 import application.android.marshi.papercrane.repository.AccessTokenRepository;
+import application.android.marshi.papercrane.repository.LastTweetAccessTimeRepository;
 import dagger.Module;
 import dagger.Provides;
 
@@ -18,6 +19,12 @@ public class RepositoryModule {
 	@Provides
 	public AccessTokenRepository provideAccessTokenRepository(Context context) {
 		return new AccessTokenRepository(context);
+	}
+
+	@Singleton
+	@Provides
+	public LastTweetAccessTimeRepository lastTweetAccessTimeRepository() {
+		return new LastTweetAccessTimeRepository();
 	}
 
 }

@@ -26,9 +26,13 @@ public class TweetRepository {
 	@Inject
 	public TweetRepository(){}
 
+	@Inject
+	LastTweetAccessTimeRepository lastTweetAccessTimeRepository;
+
 	public List<TweetItem> getTweetItemList(AccessToken accessToken, Paging paging, TweetPage tweetPage) throws TwitterException {
+		lastTweetAccessTimeRepository.set();
 		Twitter twitter = TwitterClient.getInstance(accessToken);
-		ResponseList<Status> statuses =  twitter.getHomeTimeline(paging);
+		ResponseList<Status> statuses;
 		switch (tweetPage) {
 			case MentionTimeline:
 				statuses =  twitter.getMentionsTimeline(paging);

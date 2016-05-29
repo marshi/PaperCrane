@@ -3,12 +3,12 @@ package application.android.marshi.papercrane.service.twitter;
 import android.app.Activity;
 import android.util.Log;
 import android.widget.Toast;
+import application.android.marshi.papercrane.database.Cache;
 import application.android.marshi.papercrane.database.dto.Tweet;
 import application.android.marshi.papercrane.domain.model.TweetItem;
 import application.android.marshi.papercrane.domain.usecase.timeline.GetStoredTimelineUseCase;
 import application.android.marshi.papercrane.domain.usecase.timeline.GetTimelineUseCase;
 import application.android.marshi.papercrane.enums.TweetPage;
-import application.android.marshi.papercrane.repository.TweetStoreRepository;
 import com.trello.rxlifecycle.components.support.RxFragment;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
@@ -41,8 +41,14 @@ public class TimelineService {
 	GetStoredTimelineUseCase getStoredTimelineUseCase;
 
 	@Inject
-	TweetStoreRepository tweetStoreRepository;
+	Cache cache;
 
+	/**
+	 *
+	 * @param activity
+	 * @param onError
+	 * @return
+	 */
 	private Action1<Throwable> onError(Activity activity, Action0 onError) {
 		return throwable -> {
 			if (onError != null) {
@@ -56,7 +62,6 @@ public class TimelineService {
 						"リクエスト上限数に達しました。しばらく時間をあけてから再度取得してください。",
 						Toast.LENGTH_LONG
 					).show();
-					return;
 				}
 				Log.e("", "error", throwable);
 			} else {
@@ -65,23 +70,34 @@ public class TimelineService {
 		};
 	}
 
+	private Action0 onCompleted() {
+		return () -> {
+
+		};
+	}
+
 	private void loadTweetItems(
 		RxFragment fragment,
 		AccessToken accessToken,
 		Paging paging,
-		TweetPage type,
+		TweetPage pageType,
 		Action1<List<TweetItem>> onNext,
 		Action0 onError
 	) {
-		Observable<List<TweetItem>> listObservable = getTimelineUseCase
-			.start(new TimelineRequest(accessToken, paging, type))
+		Observable<List<TweetItem>> timelineObservable = getTimelineUseCase
+			.start(new TimelineRequest(accessToken, paging, pageType))
+			.subscribeOn(Schedulers.io())
 			.observeOn(AndroidSchedulers.mainThread())
 			.compose(fragment.bindToLifecycle());
-		listObservable
-			.subscribeOn(Schedulers.computation())
+
+		//onNextの処理
+		timelineObservable
+			.observeOn(AndroidSchedulers.mainThread())
 			.subscribe(onNext, onError(fragment.getActivity(), onError));
-		listObservable
-			.subscribeOn(Schedulers.computation())
+
+		//DBへ保存
+		timelineObservable
+			.observeOn(Schedulers.computation())
 			.map(tweetItemList -> {
 				List<Tweet> tweetList = new ArrayList<>();
 				for (TweetItem t : tweetItemList) {
@@ -92,18 +108,13 @@ public class TimelineService {
 						t.getContent(),
 						t.getProfileImageUrl(),
 						t.getTweetAt(),
-						TweetPage.HomeTimeline.name()
+						pageType.name()
 					));
 				}
 				return tweetList;
 			})
-			.subscribeOn(Schedulers.io())
-			.subscribe(tweet -> tweetStoreRepository.insertTweetList(tweet));
-	}
-
-	public void loadTweetItems(RxFragment fragment, AccessToken accessToken, TweetPage type, Action1<List<TweetItem>> onNext) {
-		Paging paging = new Paging(1);
-		loadTweetItems(fragment, accessToken, paging, type, onNext, null);
+			.observeOn(Schedulers.io())
+			.subscribe(tweet -> cache.set(tweet, pageType), e -> {Log.e("error", "", e);});
 	}
 
 	public void loadTweetItems(RxFragment fragment, AccessToken accessToken, long maxId, TweetPage type, Action1<List<TweetItem>> onNext) {
@@ -139,8 +150,8 @@ public class TimelineService {
 	public void loadStoredTweets(RxFragment fragment, TweetPage tweetPage, Action1<List<TweetItem>> onNext) {
 		getStoredTimelineUseCase.start(tweetPage)
 			.compose(fragment.bindToLifecycle())
-			.observeOn(AndroidSchedulers.mainThread())
 			.subscribeOn(Schedulers.io())
+			.observeOn(AndroidSchedulers.mainThread())
 			.subscribe(onNext);
 	}
 
