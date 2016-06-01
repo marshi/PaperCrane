@@ -23,7 +23,6 @@ import application.android.marshi.papercrane.service.auth.AccessTokenService;
 import application.android.marshi.papercrane.service.twitter.TimelineService;
 import com.trello.rxlifecycle.components.support.RxFragment;
 import org.threeten.bp.LocalDateTime;
-import org.threeten.bp.ZoneOffset;
 import org.threeten.bp.temporal.ChronoUnit;
 import twitter4j.auth.AccessToken;
 
@@ -99,11 +98,9 @@ public class TweetListFragment extends RxFragment {
 			swipeRefreshLayout.setColorSchemeResources(R.color.theme500);
 			LocalDateTime now = LocalDateTime.now();
 			LocalDateTime lastAccessedTime = lastTweetAccessTimeRepository.get();
-			int waitSeconds = 60;
+			int waitSeconds = 5;
 			if (lastAccessedTime != null &&  lastAccessedTime.isAfter(now.minus(waitSeconds, ChronoUnit.SECONDS))) {
 				swipeRefreshLayout.setRefreshing(false);
-				long diffSec = (now.toEpochSecond(ZoneOffset.UTC) - lastAccessedTime.toEpochSecond(ZoneOffset.UTC));
-				Toast.makeText(this.getActivity(), MessageFormat.format("{0}秒後に取得可能です", waitSeconds - diffSec), Toast.LENGTH_SHORT).show();
 			} else {
 				timelineService.loadLatestTweetItems(
 					this,
@@ -111,10 +108,14 @@ public class TweetListFragment extends RxFragment {
 					tweetRecyclerViewAdapter.mValues.isEmpty() ? null : tweetRecyclerViewAdapter.mValues.get(0).getId(),
 					tweetPage,
 					tweetItems -> {
-						tweetRecyclerViewAdapter.addFirst(tweetItems);
+						if (tweetItems.isEmpty()) {
+							Toast.makeText(this.getActivity(), "取得ツイートなし", Toast.LENGTH_SHORT).show();
+						} else {
+							Toast.makeText(this.getActivity(), MessageFormat.format("{0}件取得", tweetItems.size()), Toast.LENGTH_SHORT).show();
+							tweetRecyclerViewAdapter.addFirst(tweetItems);
+						}
 						swipeRefreshLayout.setRefreshing(false);
-					},
-					() -> swipeRefreshLayout.setRefreshing(false)
+					}, () -> swipeRefreshLayout.setRefreshing(false)
 				);
 			}
 		});
