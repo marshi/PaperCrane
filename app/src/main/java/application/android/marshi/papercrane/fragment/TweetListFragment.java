@@ -148,7 +148,10 @@ public class TweetListFragment extends RxFragment {
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		outState.putInt(TweetPage.BUNDLE_KEY, this.tweetPage.getCode());
+		outState.putInt(
+			TweetPage.BUNDLE_KEY,
+			this.tweetPage != null ? this.tweetPage.getCode() : TweetPage.HomeTimeline.getCode()
+		);
 	}
 
 	/**

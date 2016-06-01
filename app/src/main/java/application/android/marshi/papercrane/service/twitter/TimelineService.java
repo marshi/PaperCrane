@@ -117,8 +117,16 @@ public class TimelineService {
 			.subscribe(tweet -> cache.set(tweet, pageType), e -> {Log.e("error", "", e);});
 	}
 
+	/**
+	 *
+	 * @param fragment
+	 * @param accessToken
+	 * @param maxId
+	 * @param type
+	 * @param onNext
+	 */
 	public void loadTweetItems(RxFragment fragment, AccessToken accessToken, long maxId, TweetPage type, Action1<List<TweetItem>> onNext) {
-		Paging paging = new Paging().maxId(maxId - 1).count(20);
+		Paging paging = new Paging().maxId(maxId - 1).count(200);
 		loadTweetItems(fragment, accessToken, paging, type, onNext, null);
 	}
 
@@ -134,9 +142,9 @@ public class TimelineService {
 	public void loadLatestTweetItems(RxFragment fragment, AccessToken accessToken, Long sinceId, TweetPage type, Action1<List<TweetItem>> onNext, Action0 onError) {
 		Paging paging;
 		if (sinceId != null) {
-			paging = new Paging().sinceId(sinceId).count(20);
+			paging = new Paging().sinceId(sinceId).count(200);
 		} else {
-			paging = new Paging().count(20);
+			paging = new Paging().count(200);
 		}
 		loadTweetItems(fragment, accessToken, paging, type, onNext, onError);
 	}
