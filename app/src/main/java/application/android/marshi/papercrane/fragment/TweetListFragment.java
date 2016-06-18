@@ -12,15 +12,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 import application.android.marshi.papercrane.BindingHolder;
+import application.android.marshi.papercrane.LoadCellBindingHolder;
 import application.android.marshi.papercrane.R;
 import application.android.marshi.papercrane.databinding.FragmentTweetListBinding;
+import application.android.marshi.papercrane.databinding.ReadMoreTweetItemBinding;
 import application.android.marshi.papercrane.databinding.TweetItemBinding;
 import application.android.marshi.papercrane.di.App;
 import application.android.marshi.papercrane.domain.model.TweetItem;
 import application.android.marshi.papercrane.enums.TweetPage;
+import application.android.marshi.papercrane.enums.ViewType;
 import application.android.marshi.papercrane.repository.LastTweetAccessTimeRepository;
 import application.android.marshi.papercrane.service.auth.AccessTokenService;
 import application.android.marshi.papercrane.service.twitter.TimelineService;
+import com.annimon.stream.Stream;
 import com.trello.rxlifecycle.components.support.RxFragment;
 import org.threeten.bp.LocalDateTime;
 import org.threeten.bp.temporal.ChronoUnit;
@@ -35,8 +39,6 @@ import java.util.List;
  * A fragment representing a list of Items.
  */
 public class TweetListFragment extends RxFragment {
-
-	// TODO: Customize parameter argument names
 
 	private FragmentTweetListBinding fragmentTweetListBinding;
 
@@ -53,8 +55,6 @@ public class TweetListFragment extends RxFragment {
 
 	private TweetPage tweetPage;
 
-	// TODO: Customize parameter initialization
-	@SuppressWarnings("unused")
 	public static TweetListFragment newInstance(TweetPage tweetPage) {
 		TweetListFragment fragment = new TweetListFragment();
 		Bundle args = new Bundle();
@@ -102,16 +102,23 @@ public class TweetListFragment extends RxFragment {
 			if (lastAccessedTime != null &&  lastAccessedTime.isAfter(now.minus(waitSeconds, ChronoUnit.SECONDS))) {
 				swipeRefreshLayout.setRefreshing(false);
 			} else {
+				LinkedList<TweetItem> mValues = tweetRecyclerViewAdapter.mValues;
 				timelineService.loadLatestTweetItems(
 					this,
 					accessToken,
-					tweetRecyclerViewAdapter.mValues.isEmpty() ? null : tweetRecyclerViewAdapter.mValues.get(0).getId(),
+					//取得済の最新ツイートと新たに取得したツイートが一致することを調べるためにsinceIdは最新から2番目のツイートを利用する
+					2 <= mValues.size() ? mValues.get(1).getId() : 1 == mValues.size() ? mValues.getFirst().getId() : null,
+					!mValues.isEmpty() ? mValues.getFirst().getId() : null,
 					tweetPage,
 					tweetItems -> {
 						if (tweetItems.isEmpty()) {
 							Toast.makeText(this.getActivity(), "取得ツイートなし", Toast.LENGTH_SHORT).show();
 						} else {
-							Toast.makeText(this.getActivity(), MessageFormat.format("{0}件取得", tweetItems.size()), Toast.LENGTH_SHORT).show();
+							Toast.makeText(this.getActivity(), MessageFormat.format("{0}件取得",
+								Stream.of(tweetItems)
+									.filter(t -> t.getViewType() == ViewType.Normal)
+									.count()),
+								Toast.LENGTH_SHORT).show();
 							tweetRecyclerViewAdapter.addFirst(tweetItems);
 						}
 						swipeRefreshLayout.setRefreshing(false);
@@ -141,7 +148,7 @@ public class TweetListFragment extends RxFragment {
 		recyclerView.setLayoutManager(layoutManager);
 		recyclerView.addItemDecoration(new TweetRecyclerViewItemDecoration());
 		recyclerView.addOnScrollListener(new InfinityScrollListener(this, layoutManager));
-		tweetRecyclerViewAdapter = new TweetRecyclerViewAdapter(new LinkedList<>());
+		tweetRecyclerViewAdapter = new TweetRecyclerViewAdapter(this, new LinkedList<>());
 		recyclerView.setAdapter(tweetRecyclerViewAdapter);
 	}
 
@@ -156,21 +163,60 @@ public class TweetListFragment extends RxFragment {
 	 */
 	private class TweetRecyclerViewAdapter extends RecyclerView.Adapter<BindingHolder<TweetItemBinding>> {
 
+		private RxFragment rxFragment;
+
 		private final LinkedList<TweetItem> mValues;
 
-		public TweetRecyclerViewAdapter(LinkedList<TweetItem> items) {
+		public TweetRecyclerViewAdapter(RxFragment rxFragment, LinkedList<TweetItem> items) {
+			this.rxFragment = rxFragment;
 			mValues = items;
 		}
 
 		@Override
 		public BindingHolder<TweetItemBinding> onCreateViewHolder(ViewGroup parent, int viewType) {
-			return new BindingHolder<>(getActivity(), parent, R.layout.tweet_item);
+			switch(ViewType.from(viewType)) {
+				case ReadMore:
+					return new LoadCellBindingHolder(getActivity(), parent, R.layout.read_more_tweet_item);
+				case Normal:
+				default:
+					return new BindingHolder<>(getActivity(), parent, R.layout.tweet_item);
+			}
 		}
 
 		@Override
-		public void onBindViewHolder(BindingHolder<TweetItemBinding> holder, int position) {
-			TweetItem tweetItem = mValues.get(position);
-			holder.binding.setTweet(tweetItem);
+		public int getItemViewType(int position) {
+			return mValues.get(position).getViewType().getValue();
+		}
+
+		@Override
+		public void onBindViewHolder(BindingHolder holder, int position) {
+			if (holder.binding instanceof TweetItemBinding) {
+				TweetItemBinding binding = (TweetItemBinding)holder.binding;
+				TweetItem tweetItem = mValues.get(position);
+				binding.setTweet(tweetItem);
+				return;
+			}
+			if (holder.binding instanceof ReadMoreTweetItemBinding) {
+				ReadMoreTweetItemBinding binding = (ReadMoreTweetItemBinding) holder.binding;
+				TweetItem tweetItem = mValues.get(position);
+				TweetItem newerTweetItem = mValues.get(position - 1);
+				//取得済の最新ツイートと新たに取得したツイートが一致することを調べるためにsinceIdは最新から2番目のツイートを利用する
+				TweetItem olderTweetItem = 2 <= mValues.size() ? mValues.get(position + 2) : mValues.get(position + 1);
+				binding.setOnClickReadMoreTweetItem(v -> {
+					if (olderTweetItem != null) {
+						timelineService.loadTweetItems(
+							rxFragment,
+							accessTokenService.getAccessToken(),
+							newerTweetItem.getId(),
+							olderTweetItem.getId(),
+							!mValues.isEmpty() ? mValues.getFirst().getId() : null,
+							TweetPage.HomeTimeline,
+							tweetItems -> tweetRecyclerViewAdapter.add(tweetItems, position)
+						);
+					}
+					remove(tweetItem);
+				});
+			}
 		}
 
 		@Override
@@ -187,9 +233,31 @@ public class TweetListFragment extends RxFragment {
 
 		synchronized public void addFirst(List<TweetItem> tweetList) {
 			for (int i = tweetList.size() -  1; 0 <= i; i--) {
-				this.mValues.addFirst(tweetList.get(i));
-				notifyItemInserted(0);
+				addFirst(tweetList.get(i));
 			}
+		}
+
+		synchronized public void addFirst(TweetItem tweetItem) {
+			this.mValues.addFirst(tweetItem);
+			notifyItemInserted(0);
+		}
+
+		synchronized public void add(List<TweetItem> tweetList, int position) {
+			for (int i = tweetList.size() -  1; 0 <= i; i--) {
+				add(tweetList.get(i), position);
+			}
+		}
+
+		synchronized public void add(TweetItem tweetItem, int position) {
+			this.mValues.add(position, tweetItem);
+			notifyItemInserted(position);
+		}
+
+		synchronized public void remove(TweetItem tweetItem) {
+			int position = mValues.indexOf(tweetItem);
+			this.mValues.remove(tweetItem);
+			timelineService.deleteStoredReadMore(tweetItem.getId());
+			notifyItemRemoved(position);
 		}
 
 	}

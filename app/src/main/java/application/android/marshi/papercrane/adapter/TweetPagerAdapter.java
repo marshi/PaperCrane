@@ -34,4 +34,6 @@ public class TweetPagerAdapter extends FragmentPagerAdapter {
 		return TweetPage.from(position).getTitle();
 	}
 
+
+
 }

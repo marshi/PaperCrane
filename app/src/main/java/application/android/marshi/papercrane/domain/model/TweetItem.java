@@ -4,7 +4,10 @@ import android.databinding.BindingAdapter;
 import android.text.format.DateFormat;
 import android.widget.ImageView;
 import android.widget.TextView;
+import application.android.marshi.papercrane.enums.ViewType;
+import com.annimon.stream.function.Predicate;
 import com.bumptech.glide.Glide;
+import lombok.NonNull;
 
 import java.util.Date;
 
@@ -17,13 +20,28 @@ public class TweetItem {
     private String profileImageUrl;
     private Date tweetAt;
 
-    public TweetItem(Long id, String userId, String content, String userName, String profileImageUrl, Date tweetAt) {
+    @NonNull
+    private ViewType viewType;
+
+    public TweetItem(Long id, String userId, String content, String userName, String profileImageUrl, Date tweetAt, ViewType viewType) {
         this.id = id;
         this.userId = userId;
         this.content = content;
         this.userName = userName;
         this.profileImageUrl = profileImageUrl;
         this.tweetAt = tweetAt;
+        this.viewType = viewType;
+    }
+
+	/**
+     *
+     * @param id
+     * {@link application.android.marshi.papercrane.database.dto.ReadMore}のid
+     *
+     * @return
+     */
+    public static TweetItem createReadMore(Long id) {
+        return new TweetItem(id, null, null, null, null, null, ViewType.ReadMore);
     }
 
     public Long getId() {
@@ -54,6 +72,10 @@ public class TweetItem {
         return tweetAt;
     }
 
+    public ViewType getViewType() {
+        return viewType;
+    }
+
     @BindingAdapter("profileImage")
     public static void setImage(ImageView view,String oldUrl, String newUrl) {
         if (!newUrl.equals(oldUrl)) {
@@ -67,7 +89,7 @@ public class TweetItem {
         long millis = now.getTime() - newDate.getTime();
         int sec = (int)(millis / 1000);
         if (0 < sec / 24 / 60 / 60) {
-            view.setText(DateFormat.format("MM/dd HH:mm", new Date(millis)));
+            view.setText(DateFormat.format("MM/dd kk:mm", newDate));
             return;
         }
         if (0 < sec / 60 / 60) {
@@ -79,6 +101,10 @@ public class TweetItem {
             return;
         }
         view.setText(sec + "秒前");
+    }
+
+    public static Predicate<TweetItem> viewTypePredicate(ViewType viewType) {
+        return value -> value.getViewType() == viewType;
     }
 
 }
