@@ -3,12 +3,17 @@ package application.android.marshi.papercrane.service.twitter;
 import android.app.Activity;
 import android.util.Log;
 import android.widget.Toast;
-import application.android.marshi.papercrane.database.Cache;
 import application.android.marshi.papercrane.database.dto.Tweet;
 import application.android.marshi.papercrane.domain.model.TweetItem;
 import application.android.marshi.papercrane.domain.usecase.timeline.GetStoredTimelineUseCase;
 import application.android.marshi.papercrane.domain.usecase.timeline.GetTimelineUseCase;
 import application.android.marshi.papercrane.enums.TweetPage;
+import application.android.marshi.papercrane.enums.TweetSettingValues;
+import application.android.marshi.papercrane.enums.ViewType;
+import application.android.marshi.papercrane.repository.cache.ReadMoreCacheRepository;
+import application.android.marshi.papercrane.repository.cache.TweetCacheRepository;
+import com.annimon.stream.Collectors;
+import com.annimon.stream.Stream;
 import com.trello.rxlifecycle.components.support.RxFragment;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
@@ -20,7 +25,6 @@ import twitter4j.TwitterException;
 import twitter4j.auth.AccessToken;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
 import java.util.List;
 
 import static application.android.marshi.papercrane.domain.usecase.timeline.GetTimelineUseCase.TimelineRequest;
@@ -31,8 +35,7 @@ import static application.android.marshi.papercrane.domain.usecase.timeline.GetT
 public class TimelineService {
 
 	@Inject
-	public TimelineService() {
-	}
+	public TimelineService() {}
 
 	@Inject
 	GetTimelineUseCase getTimelineUseCase;
@@ -41,7 +44,10 @@ public class TimelineService {
 	GetStoredTimelineUseCase getStoredTimelineUseCase;
 
 	@Inject
-	Cache cache;
+	TweetCacheRepository tweetCacheRepository;
+
+	@Inject
+	ReadMoreCacheRepository readMoreCacheRepository;
 
 	/**
 	 *
@@ -70,25 +76,20 @@ public class TimelineService {
 		};
 	}
 
-	private Action0 onCompleted() {
-		return () -> {
-
-		};
-	}
-
 	private void loadTweetItems(
 		RxFragment fragment,
 		AccessToken accessToken,
 		Paging paging,
 		TweetPage pageType,
+		Long latestTweetId,
 		Action1<List<TweetItem>> onNext,
 		Action0 onError
 	) {
 		Observable<List<TweetItem>> timelineObservable = getTimelineUseCase
-			.start(new TimelineRequest(accessToken, paging, pageType))
+			.start(new TimelineRequest(accessToken, paging, pageType, latestTweetId))
 			.subscribeOn(Schedulers.io())
 			.observeOn(AndroidSchedulers.mainThread())
-			.compose(fragment.bindToLifecycle());
+			.compose(fragment.bindToLifecycle()).share();
 
 		//onNextの処理
 		timelineObservable
@@ -98,23 +99,25 @@ public class TimelineService {
 		//DBへ保存
 		timelineObservable
 			.observeOn(Schedulers.computation())
-			.map(tweetItemList -> {
-				List<Tweet> tweetList = new ArrayList<>();
-				for (TweetItem t : tweetItemList) {
-					tweetList.add(new Tweet(
-						t.getId(),
-						t.getUserId(),
-						t.getUserName(),
-						t.getContent(),
-						t.getProfileImageUrl(),
-						t.getTweetAt(),
-						pageType.name()
-					));
-				}
-				return tweetList;
-			})
+			.map(tweetItemList -> Stream.of(tweetItemList)
+				.filter(TweetItem.viewTypePredicate(ViewType.Normal))
+				.map(t -> new Tweet(
+					t.getId(),
+					t.getUserId(),
+					t.getUserName(),
+					t.getContent(),
+					t.getProfileImageUrl(),
+					t.getTweetAt(),
+					pageType.name()
+				)).collect(Collectors.toList()))
 			.observeOn(Schedulers.io())
-			.subscribe(tweet -> cache.set(tweet, pageType), e -> {Log.e("error", "", e);});
+			.subscribe(tweetList -> {
+				tweetCacheRepository.set(tweetList, pageType);
+				if (tweetList.size() == TweetSettingValues.TWEET_LOAD_SIZE) {
+					Tweet oldTweetItem = tweetList.get(tweetList.size() - 1);
+					readMoreCacheRepository.set(new ReadMore(oldTweetItem.getTweetId()));
+				}
+			}, e -> Log.e("error", "", e));
 	}
 
 	/**
@@ -126,8 +129,22 @@ public class TimelineService {
 	 * @param onNext
 	 */
 	public void loadTweetItems(RxFragment fragment, AccessToken accessToken, long maxId, TweetPage type, Action1<List<TweetItem>> onNext) {
-		Paging paging = new Paging().maxId(maxId - 1).count(200);
-		loadTweetItems(fragment, accessToken, paging, type, onNext, null);
+		Paging paging = new Paging().maxId(maxId - 1).count(TweetSettingValues.TWEET_LOAD_SIZE);
+		loadTweetItems(fragment, accessToken, paging, type, null, onNext, null);
+	}
+
+	/**
+	 *
+	 * @param fragment
+	 * @param accessToken
+	 * @param maxId
+	 * @param sinceId
+	 * @param type
+	 * @param onNext
+	 */
+	public void loadTweetItems(RxFragment fragment, AccessToken accessToken, long maxId, long sinceId, Long latestTweetId, TweetPage type, Action1<List<TweetItem>> onNext) {
+		Paging paging = new Paging().maxId(maxId - 1).sinceId(sinceId).count(TweetSettingValues.TWEET_LOAD_SIZE);
+		loadTweetItems(fragment, accessToken, paging, type, latestTweetId, onNext, null);
 	}
 
 	/**
@@ -139,14 +156,14 @@ public class TimelineService {
 	 * @param onNext
 	 * @param onError
 	 */
-	public void loadLatestTweetItems(RxFragment fragment, AccessToken accessToken, Long sinceId, TweetPage type, Action1<List<TweetItem>> onNext, Action0 onError) {
+	public void loadLatestTweetItems(RxFragment fragment, AccessToken accessToken, Long sinceId, Long latestTweetId, TweetPage type, Action1<List<TweetItem>> onNext, Action0 onError) {
 		Paging paging;
 		if (sinceId != null) {
-			paging = new Paging().sinceId(sinceId).count(200);
+			paging = new Paging().sinceId(sinceId).count(TweetSettingValues.TWEET_LOAD_SIZE);
 		} else {
-			paging = new Paging().count(200);
+			paging = new Paging().count(TweetSettingValues.TWEET_LOAD_SIZE);
 		}
-		loadTweetItems(fragment, accessToken, paging, type, onNext, onError);
+		loadTweetItems(fragment, accessToken, paging, type, latestTweetId, onNext, onError);
 	}
 
 	/**
@@ -161,6 +178,13 @@ public class TimelineService {
 			.subscribeOn(Schedulers.io())
 			.observeOn(AndroidSchedulers.mainThread())
 			.subscribe(onNext);
+	}
+
+	public void deleteStoredReadMore(Long id) {
+		Observable
+			.create((Observable.OnSubscribe<Long>) subscriber -> readMoreCacheRepository.delete(id))
+			.subscribeOn(Schedulers.io())
+			.subscribe();
 	}
 
 }

@@ -3,6 +3,7 @@ package application.android.marshi.papercrane.repository;
 import application.android.marshi.papercrane.TwitterClient;
 import application.android.marshi.papercrane.domain.model.TweetItem;
 import application.android.marshi.papercrane.enums.TweetPage;
+import application.android.marshi.papercrane.enums.ViewType;
 import lombok.Data;
 import twitter4j.DirectMessage;
 import twitter4j.Paging;
@@ -63,7 +64,8 @@ public class TweetRepository {
 			status.getText(),
 			user.getName(),
 			user.getProfileImageURL(),
-			status.getCreatedAt()
+			status.getCreatedAt(),
+			ViewType.Normal
 		);
 	}
 
@@ -75,7 +77,8 @@ public class TweetRepository {
 			dm.getText(),
 			user.getName(),
 			user.getProfileImageURL(),
-			dm.getCreatedAt()
+			dm.getCreatedAt(),
+			ViewType.Normal
 		);
 	}
 
