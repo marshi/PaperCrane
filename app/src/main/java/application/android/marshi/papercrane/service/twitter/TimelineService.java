@@ -3,6 +3,7 @@ package application.android.marshi.papercrane.service.twitter;
 import android.app.Activity;
 import android.util.Log;
 import android.widget.Toast;
+import application.android.marshi.papercrane.database.dto.ReadMore;
 import application.android.marshi.papercrane.database.dto.Tweet;
 import application.android.marshi.papercrane.domain.model.TweetItem;
 import application.android.marshi.papercrane.domain.usecase.timeline.GetStoredTimelineUseCase;
