@@ -1,6 +1,5 @@
 package application.android.marshi.papercrane.service.twitter;
 
-import android.app.Activity;
 import android.util.Log;
 import android.widget.Toast;
 import application.android.marshi.papercrane.database.dto.ReadMore;
@@ -13,6 +12,7 @@ import application.android.marshi.papercrane.enums.TweetSettingValues;
 import application.android.marshi.papercrane.enums.ViewType;
 import application.android.marshi.papercrane.repository.cache.ReadMoreCacheRepository;
 import application.android.marshi.papercrane.repository.cache.TweetCacheRepository;
+import application.android.marshi.papercrane.service.ToastService;
 import com.annimon.stream.Collectors;
 import com.annimon.stream.Stream;
 import com.trello.rxlifecycle.components.support.RxFragment;
@@ -50,13 +50,15 @@ public class TimelineService {
 	@Inject
 	ReadMoreCacheRepository readMoreCacheRepository;
 
+	@Inject
+	ToastService toastService;
+
 	/**
 	 *
-	 * @param activity
 	 * @param onError
 	 * @return
 	 */
-	private Action1<Throwable> onError(Activity activity, Action0 onError) {
+	private Action1<Throwable> onErrorWithToast(Action0 onError) {
 		return throwable -> {
 			if (onError != null) {
 				onError.call();
@@ -64,11 +66,7 @@ public class TimelineService {
 			if (throwable instanceof TwitterException) {
 				TwitterException e = (TwitterException) throwable;
 				if (e.getStatusCode() == TwitterException.TOO_MANY_REQUESTS) {
-					Toast.makeText(
-						activity,
-						"リクエスト上限数に達しました。しばらく時間をあけてから再度取得してください。",
-						Toast.LENGTH_LONG
-					).show();
+					toastService.showToast("リクエスト上限数に達しました。しばらく時間をあけてから再度取得してください。", Toast.LENGTH_LONG);
 				}
 				Log.e("", "error", throwable);
 			} else {
@@ -81,13 +79,13 @@ public class TimelineService {
 		RxFragment fragment,
 		AccessToken accessToken,
 		Paging paging,
-		TweetPage pageType,
+		TweetPage tweetPage,
 		Long latestTweetId,
 		Action1<List<TweetItem>> onNext,
 		Action0 onError
 	) {
 		Observable<List<TweetItem>> timelineObservable = getTimelineUseCase
-			.start(new TimelineRequest(accessToken, paging, pageType, latestTweetId))
+			.start(new TimelineRequest(accessToken, paging, tweetPage, latestTweetId))
 			.subscribeOn(Schedulers.io())
 			.observeOn(AndroidSchedulers.mainThread())
 			.compose(fragment.bindToLifecycle()).share();
@@ -95,7 +93,7 @@ public class TimelineService {
 		//onNextの処理
 		timelineObservable
 			.observeOn(AndroidSchedulers.mainThread())
-			.subscribe(onNext, onError(fragment.getActivity(), onError));
+			.subscribe(onNext, onErrorWithToast(onError));
 
 		//DBへ保存
 		timelineObservable
@@ -109,11 +107,11 @@ public class TimelineService {
 					t.getContent(),
 					t.getProfileImageUrl(),
 					t.getTweetAt(),
-					pageType.name()
+					tweetPage.name()
 				)).collect(Collectors.toList()))
 			.observeOn(Schedulers.io())
 			.subscribe(tweetList -> {
-				tweetCacheRepository.set(tweetList, pageType);
+				tweetCacheRepository.set(tweetList, tweetPage);
 				if (tweetList.size() == TweetSettingValues.TWEET_LOAD_SIZE) {
 					Tweet oldTweetItem = tweetList.get(tweetList.size() - 1);
 					readMoreCacheRepository.set(new ReadMore(oldTweetItem.getTweetId()));
@@ -153,18 +151,26 @@ public class TimelineService {
 	 * @param fragment
 	 * @param accessToken
 	 * @param sinceId
-	 * @param type
+	 * @param tweetPage
 	 * @param onNext
 	 * @param onError
 	 */
-	public void loadLatestTweetItems(RxFragment fragment, AccessToken accessToken, Long sinceId, Long latestTweetId, TweetPage type, Action1<List<TweetItem>> onNext, Action0 onError) {
+	public void loadLatestTweetItems(
+		RxFragment fragment,
+		AccessToken accessToken,
+		Long sinceId,
+		Long latestTweetId,
+		TweetPage tweetPage,
+		Action1<List<TweetItem>> onNext,
+		Action0 onError
+	) {
 		Paging paging;
 		if (sinceId != null) {
 			paging = new Paging().sinceId(sinceId).count(TweetSettingValues.TWEET_LOAD_SIZE);
 		} else {
 			paging = new Paging().count(TweetSettingValues.TWEET_LOAD_SIZE);
 		}
-		loadTweetItems(fragment, accessToken, paging, type, latestTweetId, onNext, onError);
+		loadTweetItems(fragment, accessToken, paging, tweetPage, latestTweetId, onNext, onError);
 	}
 
 	/**
