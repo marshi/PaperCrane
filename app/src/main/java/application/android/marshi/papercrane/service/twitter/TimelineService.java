@@ -79,13 +79,13 @@ public class TimelineService {
 		RxFragment fragment,
 		AccessToken accessToken,
 		Paging paging,
-		TweetPage pageType,
+		TweetPage tweetPage,
 		Long latestTweetId,
 		Action1<List<TweetItem>> onNext,
 		Action0 onError
 	) {
 		Observable<List<TweetItem>> timelineObservable = getTimelineUseCase
-			.start(new TimelineRequest(accessToken, paging, pageType, latestTweetId))
+			.start(new TimelineRequest(accessToken, paging, tweetPage, latestTweetId))
 			.subscribeOn(Schedulers.io())
 			.observeOn(AndroidSchedulers.mainThread())
 			.compose(fragment.bindToLifecycle()).share();
@@ -107,11 +107,11 @@ public class TimelineService {
 					t.getContent(),
 					t.getProfileImageUrl(),
 					t.getTweetAt(),
-					pageType.name()
+					tweetPage.name()
 				)).collect(Collectors.toList()))
 			.observeOn(Schedulers.io())
 			.subscribe(tweetList -> {
-				tweetCacheRepository.set(tweetList, pageType);
+				tweetCacheRepository.set(tweetList, tweetPage);
 				if (tweetList.size() == TweetSettingValues.TWEET_LOAD_SIZE) {
 					Tweet oldTweetItem = tweetList.get(tweetList.size() - 1);
 					readMoreCacheRepository.set(new ReadMore(oldTweetItem.getTweetId()));
@@ -151,18 +151,26 @@ public class TimelineService {
 	 * @param fragment
 	 * @param accessToken
 	 * @param sinceId
-	 * @param type
+	 * @param tweetPage
 	 * @param onNext
 	 * @param onError
 	 */
-	public void loadLatestTweetItems(RxFragment fragment, AccessToken accessToken, Long sinceId, Long latestTweetId, TweetPage type, Action1<List<TweetItem>> onNext, Action0 onError) {
+	public void loadLatestTweetItems(
+		RxFragment fragment,
+		AccessToken accessToken,
+		Long sinceId,
+		Long latestTweetId,
+		TweetPage tweetPage,
+		Action1<List<TweetItem>> onNext,
+		Action0 onError
+	) {
 		Paging paging;
 		if (sinceId != null) {
 			paging = new Paging().sinceId(sinceId).count(TweetSettingValues.TWEET_LOAD_SIZE);
 		} else {
 			paging = new Paging().count(TweetSettingValues.TWEET_LOAD_SIZE);
 		}
-		loadTweetItems(fragment, accessToken, paging, type, latestTweetId, onNext, onError);
+		loadTweetItems(fragment, accessToken, paging, tweetPage, latestTweetId, onNext, onError);
 	}
 
 	/**

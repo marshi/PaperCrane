@@ -19,10 +19,7 @@ import application.android.marshi.papercrane.domain.model.TweetItem;
 import application.android.marshi.papercrane.enums.TweetPage;
 import application.android.marshi.papercrane.enums.ViewType;
 import application.android.marshi.papercrane.presenter.TweetListPresenter;
-import application.android.marshi.papercrane.repository.LastTweetAccessTimeRepository;
 import application.android.marshi.papercrane.service.ToastService;
-import application.android.marshi.papercrane.service.auth.AccessTokenService;
-import application.android.marshi.papercrane.service.twitter.TimelineService;
 import application.android.marshi.papercrane.view.TimelineSwipeRefreshView;
 import com.annimon.stream.Stream;
 import com.trello.rxlifecycle.components.support.RxFragment;
@@ -41,15 +38,6 @@ public class TweetListFragment extends RxFragment implements TimelineSwipeRefres
 	private TweetRecyclerViewAdapter tweetRecyclerViewAdapter;
 
 	private SwipeRefreshLayout swipeRefreshLayout;
-
-	@Inject
-	AccessTokenService accessTokenService;
-
-	@Inject
-	TimelineService timelineService;
-
-	@Inject
-	LastTweetAccessTimeRepository lastTweetAccessTimeRepository;
 
 	@Inject
 	TweetListPresenter tweetListPresenter;
@@ -105,13 +93,7 @@ public class TweetListFragment extends RxFragment implements TimelineSwipeRefres
 	@Override
 	public void onResume() {
 		super.onResume();
-		if (tweetRecyclerViewAdapter.getMValues().isEmpty()) {
-			timelineService.loadStoredTweets(
-				this,
-				tweetPage,
-				tweetItemList -> tweetRecyclerViewAdapter.addLast(tweetItemList)
-			);
-		}
+		tweetListPresenter.loadStoredTweetList(this, tweetRecyclerViewAdapter, tweetPage);
 	}
 
 	private void configureTweetRecyclerView(@NonNull RecyclerView recyclerView) {

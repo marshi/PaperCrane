@@ -1,10 +1,10 @@
 package application.android.marshi.papercrane.presenter;
 
+import android.support.annotation.NonNull;
 import application.android.marshi.papercrane.adapter.TweetRecyclerViewAdapter;
 import application.android.marshi.papercrane.domain.model.TweetItem;
 import application.android.marshi.papercrane.enums.TweetPage;
 import application.android.marshi.papercrane.repository.LastTweetAccessTimeRepository;
-import application.android.marshi.papercrane.service.ToastService;
 import application.android.marshi.papercrane.service.auth.AccessTokenService;
 import application.android.marshi.papercrane.service.twitter.TimelineService;
 import application.android.marshi.papercrane.view.TimelineSwipeRefreshView;
@@ -22,8 +22,7 @@ import java.util.LinkedList;
 public class TweetListPresenter {
 
 	@Inject
-	public TweetListPresenter() {
-	}
+	public TweetListPresenter() {}
 
 	@Inject
 	LastTweetAccessTimeRepository lastTweetAccessTimeRepository;
@@ -34,10 +33,12 @@ public class TweetListPresenter {
 	@Inject
 	AccessTokenService accessTokenService;
 
-	@Inject
-	ToastService toastService;
-
-	public void fetchLatestTimeline(RxFragment rxFragment, TimelineSwipeRefreshView timelineSwipeRefreshView, TweetRecyclerViewAdapter tweetRecyclerViewAdapter, TweetPage tweetPage) {
+	public void fetchLatestTimeline(
+		RxFragment rxFragment,
+		TimelineSwipeRefreshView timelineSwipeRefreshView,
+		TweetRecyclerViewAdapter tweetRecyclerViewAdapter,
+		TweetPage tweetPage
+	) {
 		AccessToken accessToken = accessTokenService.getAccessToken();
 		LocalDateTime now = LocalDateTime.now();
 		LocalDateTime lastAccessedTime = lastTweetAccessTimeRepository.get();
@@ -58,5 +59,20 @@ public class TweetListPresenter {
 			timelineSwipeRefreshView::failToUpdateTimeline
 		);
 	}
+
+	public void loadStoredTweetList(
+		@NonNull RxFragment rxFragment,
+		@NonNull TweetRecyclerViewAdapter tweetRecyclerViewAdapter,
+		@NonNull TweetPage tweetPage
+	) {
+		if (tweetRecyclerViewAdapter.getMValues().isEmpty()) {
+			timelineService.loadStoredTweets(
+				rxFragment,
+				tweetPage,
+				tweetRecyclerViewAdapter::addLast
+			);
+		}
+	}
+
 }
 
