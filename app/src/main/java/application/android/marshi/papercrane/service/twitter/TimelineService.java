@@ -1,6 +1,5 @@
 package application.android.marshi.papercrane.service.twitter;
 
-import android.app.Activity;
 import android.util.Log;
 import android.widget.Toast;
 import application.android.marshi.papercrane.database.dto.ReadMore;
@@ -13,6 +12,7 @@ import application.android.marshi.papercrane.enums.TweetSettingValues;
 import application.android.marshi.papercrane.enums.ViewType;
 import application.android.marshi.papercrane.repository.cache.ReadMoreCacheRepository;
 import application.android.marshi.papercrane.repository.cache.TweetCacheRepository;
+import application.android.marshi.papercrane.service.ToastService;
 import com.annimon.stream.Collectors;
 import com.annimon.stream.Stream;
 import com.trello.rxlifecycle.components.support.RxFragment;
@@ -50,13 +50,15 @@ public class TimelineService {
 	@Inject
 	ReadMoreCacheRepository readMoreCacheRepository;
 
+	@Inject
+	ToastService toastService;
+
 	/**
 	 *
-	 * @param activity
 	 * @param onError
 	 * @return
 	 */
-	private Action1<Throwable> onError(Activity activity, Action0 onError) {
+	private Action1<Throwable> onErrorWithToast(Action0 onError) {
 		return throwable -> {
 			if (onError != null) {
 				onError.call();
@@ -64,11 +66,7 @@ public class TimelineService {
 			if (throwable instanceof TwitterException) {
 				TwitterException e = (TwitterException) throwable;
 				if (e.getStatusCode() == TwitterException.TOO_MANY_REQUESTS) {
-					Toast.makeText(
-						activity,
-						"リクエスト上限数に達しました。しばらく時間をあけてから再度取得してください。",
-						Toast.LENGTH_LONG
-					).show();
+					toastService.showToast("リクエスト上限数に達しました。しばらく時間をあけてから再度取得してください。", Toast.LENGTH_LONG);
 				}
 				Log.e("", "error", throwable);
 			} else {
@@ -95,7 +93,7 @@ public class TimelineService {
 		//onNextの処理
 		timelineObservable
 			.observeOn(AndroidSchedulers.mainThread())
-			.subscribe(onNext, onError(fragment.getActivity(), onError));
+			.subscribe(onNext, onErrorWithToast(onError));
 
 		//DBへ保存
 		timelineObservable
