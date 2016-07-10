@@ -1,6 +1,7 @@
 package application.android.marshi.papercrane.service;
 
-import application.android.marshi.papercrane.domain.usecase.toast.ToastUseCase;
+import android.content.Context;
+import android.widget.Toast;
 
 import javax.inject.Inject;
 
@@ -9,14 +10,19 @@ import javax.inject.Inject;
  */
 public class ToastService {
 
-	@Inject
-	public ToastService() {}
+	private Context context;
 
 	@Inject
-	ToastUseCase toastUseCase;
+	public ToastService(Context context) {
+		this.context = context;
+	}
 
 	public void showToast(String text, int duration) {
-		toastUseCase.start(new ToastUseCase.ToastRequest(text, duration));
+		if (duration == Toast.LENGTH_SHORT) {
+			Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
+		} else {
+			Toast.makeText(context, text, Toast.LENGTH_LONG).show();
+		}
 	}
 
 }

@@ -1,7 +1,7 @@
 package application.android.marshi.papercrane.di.module;
 
 import android.content.Context;
-import application.android.marshi.papercrane.domain.usecase.toast.ToastUseCase;
+import application.android.marshi.papercrane.service.ToastService;
 import dagger.Module;
 import dagger.Provides;
 
@@ -12,12 +12,12 @@ import javax.inject.Singleton;
  */
 @Singleton
 @Module
-public class UseCaseModule {
+public class ServiceModule {
 
 	@Singleton
 	@Provides
-	public ToastUseCase provideToastUseCase(Context context) {
-		return new ToastUseCase(context);
+	public ToastService provideToastService(Context context) {
+		return new ToastService(context);
 	}
 
 }
