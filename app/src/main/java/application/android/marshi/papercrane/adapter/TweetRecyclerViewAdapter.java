@@ -21,6 +21,7 @@ import application.android.marshi.papercrane.activity.TweetDetailActivity;
 import application.android.marshi.papercrane.databinding.ReadMoreTweetItemBinding;
 import application.android.marshi.papercrane.databinding.TweetItemBinding;
 import application.android.marshi.papercrane.domain.model.TweetItem;
+import application.android.marshi.papercrane.domain.spec.Spec;
 import application.android.marshi.papercrane.enums.TweetPage;
 import application.android.marshi.papercrane.enums.ViewType;
 import application.android.marshi.papercrane.service.auth.AccessTokenService;
@@ -76,16 +77,13 @@ public class TweetRecyclerViewAdapter extends RecyclerView.Adapter<BindingHolder
 			binding.setTweet(tweetItem);
 			binding.content.setOnClickListener(v -> {
 				TextView textView = (TextView)v;
-				if (textView.getSelectionStart() == -1 && textView.getSelectionEnd() == -1) {
+				if (Spec.notTapWebLink(textView)) {
 					FragmentActivity activity = rxFragment.getActivity();
 					Intent intent = new Intent(activity, TweetDetailActivity.class);
 					intent.putExtra(TweetItem.class.getName(), tweetItem);
 					Pair profileImage = new Pair(binding.profileImage, "tweet_detail_profile_image");
-					Pair userId = new Pair(binding.userId, "tweet_detail_user_id");
-					Pair username = new Pair(binding.userName, "tweet_detail_user_name");
-					Pair content = new Pair(binding.content, "tweet_detail_content");
 					activity.startActivity(intent, ActivityOptionsCompat.makeSceneTransitionAnimation(activity,
-						profileImage, userId, username, content
+						profileImage
 					).toBundle());
 				}
 			});

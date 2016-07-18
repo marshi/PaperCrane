@@ -8,9 +8,10 @@
 		<variable name="tweet" type="application.android.marshi.papercrane.domain.model.TweetItem"/>
 	</data>
 	<LinearLayout
-			android:layout_height="match_parent"
+			android:layout_height="wrap_content"
 			android:layout_width="match_parent"
-			android:orientation="vertical">
+			android:orientation="vertical"
+	>
 
 		<RelativeLayout
 				android:layout_width="match_parent"
@@ -22,39 +23,48 @@
 				tools:context="application.android.marshi.papercrane.activity.TweetDetailActivity">
 			<ImageView
 					android:id="@+id/tweet_detail_profile_image"
-					android:layout_width="40dp"
-					android:layout_height="40dp"
-					android:background="#777"
+					android:layout_width="60dp"
+					android:layout_height="60dp"
 					android:transitionName="tweet_detail_profile_image"
 					app:profileImage="@{tweet.profileImageUrl}"
 			/>
 
-			<TextView
-					android:id="@+id/tweet_detail_user_id"
-					android:layout_width="wrap_content"
+			<LinearLayout
+					android:layout_width="match_parent"
 					android:layout_height="wrap_content"
+					android:orientation="vertical"
+					android:layout_marginStart="10dp"
 					android:layout_toEndOf="@id/tweet_detail_profile_image"
-					android:transitionName="tweet_detail_user_id"
-					android:text="@{tweet.userId}"
-			/>
+			>
+				<TextView
+						android:id="@+id/tweet_detail_user_name"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_marginBottom="1dp"
+						android:textSize="@dimen/text_size_small"
+						android:text="@{tweet.userName}"
+				/>
 
-			<TextView
-					android:id="@+id/tweet_detail_user_name"
-					android:layout_width="wrap_content"
-					android:layout_height="wrap_content"
-					android:layout_toEndOf="@id/tweet_detail_profile_image"
-					android:layout_below="@id/tweet_detail_user_id"
-					android:transitionName="tweet_detail_user_name"
-					android:text="@{tweet.userName}"
-			/>
+				<TextView
+						android:id="@+id/tweet_detail_user_id"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:textSize="@dimen/text_size_small"
+						android:text="@{tweet.userId}"
+				/>
+			</LinearLayout>
 
 		</RelativeLayout>
 		<TextView
 				android:id="@+id/tweet_detail_content"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
+				android:textSize="@dimen/text_size_medium"
+				android:layout_marginStart="16dp"
+				android:layout_marginEnd="16dp"
+				android:textColorLink="@color/theme500"
+				android:autoLink="web"
 				android:text="@{tweet.content}"
-		    android:transitionName="tweet_detail_content"
 		/>
 
 	</LinearLayout>

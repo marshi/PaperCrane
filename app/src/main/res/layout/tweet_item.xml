@@ -33,7 +33,6 @@
 						android:layout_marginStart="10dp"
 						android:layout_toEndOf="@id/profile_image"
 		        android:text="@{tweet.userName}"
-						android:transitionName="tweet_detail_user_id"
 		/>
 
 		<TextView
@@ -43,7 +42,6 @@
 						android:layout_marginStart="10dp"
 						android:layout_toEndOf="@id/user_name"
 		        android:text="@{tweet.userId}"
-						android:transitionName="tweet_detail_user_name"
 		/>
 
 		<TextView
@@ -56,8 +54,8 @@
 						android:layout_alignStart="@id/user_name"
 						android:autoLink="web"
 						android:textColorLink="@color/theme500"
+						android:textSize="@dimen/text_size_small"
 						android:text="@{tweet.content}"
-		        android:transitionName="tweet_detail_content"
 		/>
 
 		<TextView
@@ -67,7 +65,7 @@
 						android:textAppearance="?attr/textAppearanceListItem"
 						android:layout_below="@id/content"
 						android:layout_alignParentEnd="true"
-						android:textSize="@dimen/tweet_at"
+						android:textSize="@dimen/text_size_micro"
 						app:tweetTime="@{tweet.tweetAt}"
 		/>
 
