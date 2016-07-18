@@ -4,14 +4,19 @@ package application.android.marshi.papercrane.adapter;
  * @author marshi on 2016/07/09.
  */
 
+import android.content.Intent;
 import android.graphics.Rect;
+import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import application.android.marshi.papercrane.BindingHolder;
 import application.android.marshi.papercrane.LoadCellBindingHolder;
 import application.android.marshi.papercrane.R;
+import application.android.marshi.papercrane.activity.TweetDetailActivity;
 import application.android.marshi.papercrane.databinding.ReadMoreTweetItemBinding;
 import application.android.marshi.papercrane.databinding.TweetItemBinding;
 import application.android.marshi.papercrane.domain.model.TweetItem;
@@ -68,6 +73,14 @@ public class TweetRecyclerViewAdapter extends RecyclerView.Adapter<BindingHolder
 			TweetItemBinding binding = (TweetItemBinding)holder.binding;
 			TweetItem tweetItem = mValues.get(position);
 			binding.setTweet(tweetItem);
+			binding.content.setOnClickListener(v -> {
+				TextView textView = (TextView)v;
+				if (textView.getSelectionStart() == -1 && textView.getSelectionEnd() == -1) {
+					FragmentActivity activity = rxFragment.getActivity();
+					Intent intent = new Intent(activity, TweetDetailActivity.class);
+					activity.startActivity(intent, ActivityOptionsCompat.makeSceneTransitionAnimation(activity).toBundle());
+				}
+			});
 			return;
 		}
 		if (holder.binding instanceof ReadMoreTweetItemBinding) {

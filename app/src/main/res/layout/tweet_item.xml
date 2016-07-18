@@ -5,6 +5,7 @@
 >
 	<data>
 		<variable name="tweet" type="application.android.marshi.papercrane.domain.model.TweetItem"/>
+		<variable name="onClick" type="android.view.View.OnClickListener"/>
 	</data>
 
 	<RelativeLayout
@@ -13,6 +14,7 @@
 					android:paddingStart="5dp"
 					android:paddingEnd="5dp"
 					android:orientation="horizontal"
+	        android:onClick="@{onClick}"
 	>
 
 		<ImageView
