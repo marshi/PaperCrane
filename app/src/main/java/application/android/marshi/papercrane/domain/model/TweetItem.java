@@ -1,6 +1,8 @@
 package application.android.marshi.papercrane.domain.model;
 
 import android.databinding.BindingAdapter;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.text.format.DateFormat;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -11,7 +13,7 @@ import lombok.NonNull;
 
 import java.util.Date;
 
-public class TweetItem {
+public class TweetItem implements Parcelable {
 
     private Long id;
     private String userId;
@@ -33,7 +35,7 @@ public class TweetItem {
         this.viewType = viewType;
     }
 
-	/**
+    /**
      *
      * @param id
      * {@link application.android.marshi.papercrane.database.dto.ReadMore}のid
@@ -107,5 +109,45 @@ public class TweetItem {
         return value -> value.getViewType() == viewType;
     }
 
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeValue(this.id);
+        dest.writeString(this.userId);
+        dest.writeString(this.userName);
+        dest.writeString(this.content);
+        dest.writeString(this.profileImageUrl);
+        dest.writeLong(this.tweetAt != null ? this.tweetAt.getTime() : -1);
+        dest.writeInt(this.viewType == null ? -1 : this.viewType.ordinal());
+    }
+
+    protected TweetItem(Parcel in) {
+        this.id = (Long) in.readValue(Long.class.getClassLoader());
+        this.userId = in.readString();
+        this.userName = in.readString();
+        this.content = in.readString();
+        this.profileImageUrl = in.readString();
+        long tmpTweetAt = in.readLong();
+        this.tweetAt = tmpTweetAt == -1 ? null : new Date(tmpTweetAt);
+        int tmpViewType = in.readInt();
+        this.viewType = tmpViewType == -1 ? null : ViewType.values()[tmpViewType];
+    }
+
+    public static final Creator<TweetItem> CREATOR = new Creator<TweetItem>() {
+        @Override
+        public TweetItem createFromParcel(Parcel source) {
+            return new TweetItem(source);
+        }
+
+        @Override
+        public TweetItem[] newArray(int size) {
+            return new TweetItem[size];
+        }
+    };
 }
 

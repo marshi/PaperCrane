@@ -4,17 +4,24 @@ package application.android.marshi.papercrane.adapter;
  * @author marshi on 2016/07/09.
  */
 
+import android.content.Intent;
 import android.graphics.Rect;
+import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.util.Pair;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import application.android.marshi.papercrane.BindingHolder;
 import application.android.marshi.papercrane.LoadCellBindingHolder;
 import application.android.marshi.papercrane.R;
+import application.android.marshi.papercrane.activity.TweetDetailActivity;
 import application.android.marshi.papercrane.databinding.ReadMoreTweetItemBinding;
 import application.android.marshi.papercrane.databinding.TweetItemBinding;
 import application.android.marshi.papercrane.domain.model.TweetItem;
+import application.android.marshi.papercrane.domain.spec.Spec;
 import application.android.marshi.papercrane.enums.TweetPage;
 import application.android.marshi.papercrane.enums.ViewType;
 import application.android.marshi.papercrane.service.auth.AccessTokenService;
@@ -68,6 +75,18 @@ public class TweetRecyclerViewAdapter extends RecyclerView.Adapter<BindingHolder
 			TweetItemBinding binding = (TweetItemBinding)holder.binding;
 			TweetItem tweetItem = mValues.get(position);
 			binding.setTweet(tweetItem);
+			binding.content.setOnClickListener(v -> {
+				TextView textView = (TextView)v;
+				if (Spec.notTapWebLink(textView)) {
+					FragmentActivity activity = rxFragment.getActivity();
+					Intent intent = new Intent(activity, TweetDetailActivity.class);
+					intent.putExtra(TweetItem.class.getName(), tweetItem);
+					Pair profileImage = new Pair(binding.profileImage, "tweet_detail_profile_image");
+					activity.startActivity(intent, ActivityOptionsCompat.makeSceneTransitionAnimation(activity,
+						profileImage
+					).toBundle());
+				}
+			});
 			return;
 		}
 		if (holder.binding instanceof ReadMoreTweetItemBinding) {

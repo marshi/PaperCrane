@@ -5,6 +5,7 @@
 >
 	<data>
 		<variable name="tweet" type="application.android.marshi.papercrane.domain.model.TweetItem"/>
+		<variable name="onClick" type="android.view.View.OnClickListener"/>
 	</data>
 
 	<RelativeLayout
@@ -13,6 +14,7 @@
 					android:paddingStart="5dp"
 					android:paddingEnd="5dp"
 					android:orientation="horizontal"
+	        android:onClick="@{onClick}"
 	>
 
 		<ImageView
@@ -21,6 +23,7 @@
 						android:layout_height="40dp"
 						android:contentDescription="profile"
 						app:profileImage="@{tweet.profileImageUrl}"
+						android:transitionName="tweet_detail_profile_image"
 		/>
 
 		<TextView
@@ -51,6 +54,7 @@
 						android:layout_alignStart="@id/user_name"
 						android:autoLink="web"
 						android:textColorLink="@color/theme500"
+						android:textSize="@dimen/text_size_small"
 						android:text="@{tweet.content}"
 		/>
 
@@ -61,7 +65,7 @@
 						android:textAppearance="?attr/textAppearanceListItem"
 						android:layout_below="@id/content"
 						android:layout_alignParentEnd="true"
-						android:textSize="@dimen/tweet_at"
+						android:textSize="@dimen/text_size_micro"
 						app:tweetTime="@{tweet.tweetAt}"
 		/>
 

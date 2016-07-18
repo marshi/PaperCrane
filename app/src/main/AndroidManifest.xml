@@ -18,31 +18,29 @@
 					android:theme="@style/AppTheme">
 		<activity
 						android:name=".activity.MainActivity"
-						android:noHistory="true"
-		        android:launchMode="singleTask"
-		>
+						android:launchMode="singleTask"
+						android:noHistory="true">
 			<intent-filter android:label="@string/app_name">
 				<action android:name="android.intent.action.MAIN"/>
+
 				<category android:name="android.intent.category.LAUNCHER"/>
 			</intent-filter>
 		</activity>
-
 		<activity
 						android:name=".activity.LoginActivity"
 						android:label="@string/title_activity_login"
-						android:launchMode="singleTask"
-		>
+						android:launchMode="singleTask">
 		</activity>
-
 		<activity
 						android:name=".activity.TimelineActivity"
-						android:launchMode="singleInstance"
-						android:theme="@style/AppTheme.NoActionBar"
-		>
+						android:launchMode="singleTask"
+						android:theme="@style/AppTheme.NoActionBar">
 			<intent-filter>
 				<action android:name="android.intent.action.VIEW"/>
+
 				<category android:name="android.intent.category.DEFAULT"/>
 				<category android:name="android.intent.category.BROWSABLE"/>
+
 				<data android:scheme="papercrane"/>
 			</intent-filter>
 		</activity>
@@ -54,6 +52,8 @@
 						android:name="com.google.android.gms.version"
 						android:value="@integer/google_play_services_version"/>
 
+		<activity android:name=".activity.TweetDetailActivity">
+		</activity>
 	</application>
 
 </manifest>
