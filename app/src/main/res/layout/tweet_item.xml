@@ -23,6 +23,7 @@
 						android:layout_height="40dp"
 						android:contentDescription="profile"
 						app:profileImage="@{tweet.profileImageUrl}"
+						android:transitionName="tweet_detail_profile_image"
 		/>
 
 		<TextView
@@ -32,6 +33,7 @@
 						android:layout_marginStart="10dp"
 						android:layout_toEndOf="@id/profile_image"
 		        android:text="@{tweet.userName}"
+						android:transitionName="tweet_detail_user_id"
 		/>
 
 		<TextView
@@ -41,6 +43,7 @@
 						android:layout_marginStart="10dp"
 						android:layout_toEndOf="@id/user_name"
 		        android:text="@{tweet.userId}"
+						android:transitionName="tweet_detail_user_name"
 		/>
 
 		<TextView
@@ -54,6 +57,7 @@
 						android:autoLink="web"
 						android:textColorLink="@color/theme500"
 						android:text="@{tweet.content}"
+		        android:transitionName="tweet_detail_content"
 		/>
 
 		<TextView

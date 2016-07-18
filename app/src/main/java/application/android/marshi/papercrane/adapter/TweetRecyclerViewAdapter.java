@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.graphics.Rect;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.util.Pair;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -78,7 +79,14 @@ public class TweetRecyclerViewAdapter extends RecyclerView.Adapter<BindingHolder
 				if (textView.getSelectionStart() == -1 && textView.getSelectionEnd() == -1) {
 					FragmentActivity activity = rxFragment.getActivity();
 					Intent intent = new Intent(activity, TweetDetailActivity.class);
-					activity.startActivity(intent, ActivityOptionsCompat.makeSceneTransitionAnimation(activity).toBundle());
+					intent.putExtra(TweetItem.class.getName(), tweetItem);
+					Pair profileImage = new Pair(binding.profileImage, "tweet_detail_profile_image");
+					Pair userId = new Pair(binding.userId, "tweet_detail_user_id");
+					Pair username = new Pair(binding.userName, "tweet_detail_user_name");
+					Pair content = new Pair(binding.content, "tweet_detail_content");
+					activity.startActivity(intent, ActivityOptionsCompat.makeSceneTransitionAnimation(activity,
+						profileImage, userId, username, content
+					).toBundle());
 				}
 			});
 			return;

@@ -2,7 +2,11 @@
 <layout
 		xmlns:android="http://schemas.android.com/apk/res/android"
 		xmlns:tools="http://schemas.android.com/tools"
+		xmlns:app="http://schemas.android.com/apk/res-auto"
 >
+	<data>
+		<variable name="tweet" type="application.android.marshi.papercrane.domain.model.TweetItem"/>
+	</data>
 	<LinearLayout
 			android:layout_height="match_parent"
 			android:layout_width="match_parent"
@@ -20,7 +24,9 @@
 					android:id="@+id/tweet_detail_profile_image"
 					android:layout_width="40dp"
 					android:layout_height="40dp"
-			    android:background="#777"
+					android:background="#777"
+					android:transitionName="tweet_detail_profile_image"
+					app:profileImage="@{tweet.profileImageUrl}"
 			/>
 
 			<TextView
@@ -28,6 +34,8 @@
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
 					android:layout_toEndOf="@id/tweet_detail_profile_image"
+					android:transitionName="tweet_detail_user_id"
+					android:text="@{tweet.userId}"
 			/>
 
 			<TextView
@@ -36,6 +44,8 @@
 					android:layout_height="wrap_content"
 					android:layout_toEndOf="@id/tweet_detail_profile_image"
 					android:layout_below="@id/tweet_detail_user_id"
+					android:transitionName="tweet_detail_user_name"
+					android:text="@{tweet.userName}"
 			/>
 
 		</RelativeLayout>
@@ -43,6 +53,8 @@
 				android:id="@+id/tweet_detail_content"
 				android:layout_width="match_parent"
 				android:layout_height="wrap_content"
+				android:text="@{tweet.content}"
+		    android:transitionName="tweet_detail_content"
 		/>
 
 	</LinearLayout>
