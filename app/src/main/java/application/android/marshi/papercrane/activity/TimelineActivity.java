@@ -48,6 +48,12 @@ public class TimelineActivity extends AppCompatActivity {
 		FragmentManager fragmentManager = getSupportFragmentManager();
 		FragmentPagerAdapter fragmentPagerAdapter = new TweetPagerAdapter(fragmentManager);
 		activityTweetListBinding.viewPager.setAdapter(fragmentPagerAdapter);
+
+		activityTweetListBinding.setOnClickFab(v -> {
+			Intent tweetEditorActivityIntent = new Intent(this, TweetEditorActivity.class);
+			startActivity(tweetEditorActivityIntent);
+		});
+
 	}
 
 }

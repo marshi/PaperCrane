@@ -54,6 +54,10 @@
 
 		<activity android:name=".activity.TweetDetailActivity">
 		</activity>
+		<activity android:name=".activity.TweetEditorActivity"
+		          android:theme="@style/AppTheme.NoActionBar"
+		>
+		</activity>
 	</application>
 
 </manifest>
