@@ -5,6 +5,7 @@ import application.android.marshi.papercrane.fragment.TweetEditorFragment;
 import application.android.marshi.papercrane.service.ToastService;
 import application.android.marshi.papercrane.service.auth.AccessTokenService;
 import application.android.marshi.papercrane.service.twitter.TweetPostService;
+import rx.functions.Action1;
 
 import javax.inject.Inject;
 
@@ -27,19 +28,22 @@ public class TweetPostPresenter {
 	public TweetPostPresenter() {}
 
 	public void post(TweetEditorFragment tweetEditorFragment, String message) {
-
 		tweetPostService.post(
 				accessTokenService.getAccessToken(),
 				message,
-				b -> {
-					if (b) {
-						toastService.showToast("ツイートしました", Toast.LENGTH_SHORT);
-						tweetEditorFragment.getActivity().finish();
-					} else {
-						toastService.showToast("ツイートに失敗しました", Toast.LENGTH_SHORT);
-					}},
+				onNext(tweetEditorFragment),
 				Throwable::printStackTrace
 		);
+	}
+
+	private Action1<Boolean> onNext(TweetEditorFragment tweetEditorFragment) {
+		return b -> {
+			if (b) {
+				toastService.showToast("ツイートしました", Toast.LENGTH_SHORT);
+				tweetEditorFragment.getActivity().finish();
+			} else {
+				toastService.showToast("ツイートに失敗しました", Toast.LENGTH_SHORT);
+			}};
 	}
 
 }

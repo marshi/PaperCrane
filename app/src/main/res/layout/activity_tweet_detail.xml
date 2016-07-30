@@ -1,70 +1,109 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout
-		xmlns:android="http://schemas.android.com/apk/res/android"
-		xmlns:tools="http://schemas.android.com/tools"
-		xmlns:app="http://schemas.android.com/apk/res-auto"
+				xmlns:android="http://schemas.android.com/apk/res/android"
+				xmlns:tools="http://schemas.android.com/tools"
+				xmlns:app="http://schemas.android.com/apk/res-auto"
 >
 	<data>
 		<variable name="tweet" type="application.android.marshi.papercrane.domain.model.TweetItem"/>
 	</data>
 	<LinearLayout
-			android:layout_height="wrap_content"
-			android:layout_width="match_parent"
-			android:orientation="vertical"
+					android:layout_height="wrap_content"
+					android:layout_width="match_parent"
+					android:orientation="vertical"
 	>
 
 		<RelativeLayout
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:paddingLeft="@dimen/activity_horizontal_margin"
-				android:paddingRight="@dimen/activity_horizontal_margin"
-				android:paddingTop="@dimen/activity_vertical_margin"
-				android:paddingBottom="@dimen/activity_vertical_margin"
-				tools:context="application.android.marshi.papercrane.activity.TweetDetailActivity">
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:paddingLeft="@dimen/activity_horizontal_margin"
+						android:paddingRight="@dimen/activity_horizontal_margin"
+						android:paddingTop="@dimen/activity_vertical_margin"
+						android:paddingBottom="@dimen/activity_vertical_margin"
+						tools:context="application.android.marshi.papercrane.activity.TweetDetailActivity"
+		>
 			<ImageView
-					android:id="@+id/tweet_detail_profile_image"
-					android:layout_width="60dp"
-					android:layout_height="60dp"
-					android:transitionName="tweet_detail_profile_image"
-					app:profileImage="@{tweet.profileImageUrl}"
+							android:id="@+id/tweet_detail_profile_image"
+							android:layout_width="60dp"
+							android:layout_height="60dp"
+							android:transitionName="tweet_detail_profile_image"
+							app:profileImage="@{tweet.profileImageUrl}"
+							tools:src="@mipmap/ic_launcher"
 			/>
 
 			<LinearLayout
-					android:layout_width="match_parent"
-					android:layout_height="wrap_content"
-					android:orientation="vertical"
-					android:layout_marginStart="10dp"
-					android:layout_toEndOf="@id/tweet_detail_profile_image"
+							android:layout_width="match_parent"
+							android:layout_height="wrap_content"
+							android:orientation="vertical"
+							android:layout_marginStart="10dp"
+							android:layout_toEndOf="@id/tweet_detail_profile_image"
 			>
 				<TextView
-						android:id="@+id/tweet_detail_user_name"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:layout_marginBottom="1dp"
-						android:textSize="@dimen/text_size_small"
-						android:text="@{tweet.userName}"
+								android:id="@+id/tweet_detail_user_name"
+								android:layout_width="wrap_content"
+								android:layout_height="wrap_content"
+								android:layout_marginBottom="1dp"
+								android:textSize="@dimen/text_size_small"
+								android:text="@{tweet.userName}"
+								tools:text="user_name"
 				/>
 
 				<TextView
-						android:id="@+id/tweet_detail_user_id"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:textSize="@dimen/text_size_small"
-						android:text="@{tweet.userId}"
+								android:id="@+id/tweet_detail_user_id"
+								android:layout_width="wrap_content"
+								android:layout_height="wrap_content"
+								android:textSize="@dimen/text_size_small"
+								android:text="@{tweet.userId}"
+								tools:text="userName"
 				/>
 			</LinearLayout>
 
 		</RelativeLayout>
 		<TextView
-				android:id="@+id/tweet_detail_content"
-				android:layout_width="match_parent"
-				android:layout_height="wrap_content"
-				android:textSize="@dimen/text_size_medium"
-				android:layout_marginStart="16dp"
-				android:layout_marginEnd="16dp"
-				android:textColorLink="@color/theme500"
-				android:autoLink="web"
-				android:text="@{tweet.content}"
+						android:id="@+id/tweet_detail_content"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:textSize="@dimen/text_size_medium"
+						android:layout_marginStart="16dp"
+						android:layout_marginEnd="16dp"
+						android:textColorLink="@color/theme500"
+						android:autoLink="web"
+						android:text="@{tweet.content}"
+						tools:text="aaaaaaaaaaaaaaaaabbbbbbbbbbbbbbbbbbbbbbbcccccccccccccccccddddddddddddddddd"
+		/>
+		<LinearLayout
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:orientation="horizontal"
+						android:layout_marginTop="16dp"
+		>
+			<ImageView
+							android:id="@+id/reply_icon"
+							android:layout_width="24dp"
+							android:layout_height="24dp"
+							android:layout_weight="1"
+							app:srcCompat="@drawable/ic_reply"
+			/>
+			<ImageView
+							android:id="@+id/retweet_icon"
+							android:layout_width="24dp"
+							android:layout_height="24dp"
+							android:layout_weight="1"
+							app:srcCompat="@drawable/ic_retweet"
+			/>
+			<ImageView
+							android:id="@+id/fav_icon"
+							android:layout_width="24dp"
+							android:layout_height="24dp"
+							android:layout_weight="1"
+							app:srcCompat="@drawable/ic_star_black"
+			/>
+		</LinearLayout>
+		<View
+						android:layout_width="match_parent"
+						android:background="@drawable/gradient"
+						android:layout_marginTop="12dp"
+						android:layout_height="1dp"
 		/>
 
 	</LinearLayout>
