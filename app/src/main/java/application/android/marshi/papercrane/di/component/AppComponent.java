@@ -7,6 +7,7 @@ import application.android.marshi.papercrane.di.module.AppModule;
 import application.android.marshi.papercrane.di.module.DatabaseModule;
 import application.android.marshi.papercrane.di.module.RepositoryModule;
 import application.android.marshi.papercrane.di.module.ServiceModule;
+import application.android.marshi.papercrane.fragment.TweetEditorFragment;
 import application.android.marshi.papercrane.fragment.TweetListFragment;
 import dagger.Component;
 
@@ -26,5 +27,7 @@ public interface AppComponent {
 	void inject(TimelineActivity timelineActivity);
 
 	void inject(TweetListFragment tweetListFragment);
+
+	void inject(TweetEditorFragment tweetEditorFragment);
 
 }

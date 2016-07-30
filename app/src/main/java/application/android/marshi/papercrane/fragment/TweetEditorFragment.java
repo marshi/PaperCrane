@@ -1,16 +1,28 @@
 package application.android.marshi.papercrane.fragment;
 
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.SpannableStringBuilder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import application.android.marshi.papercrane.R;
+import application.android.marshi.papercrane.databinding.FragmentTweetEditorBinding;
+import application.android.marshi.papercrane.di.App;
+import application.android.marshi.papercrane.presenter.TweetPostPresenter;
+
+import javax.inject.Inject;
 
 /**
  *
  */
 public class TweetEditorFragment extends Fragment {
+
+	private FragmentTweetEditorBinding binding;
+
+	@Inject
+	TweetPostPresenter tweetPostPresenter;
 
 	public TweetEditorFragment() {
 		// Required empty public constructor
@@ -32,12 +44,20 @@ public class TweetEditorFragment extends Fragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		App.getApplicationComponent().inject(this);
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		// Inflate the layout for this fragment
-		return inflater.inflate(R.layout.fragment_tweet_editor, container, false);
+		binding = DataBindingUtil.inflate(inflater, R.layout.fragment_tweet_editor, null, false);
+		binding.tweetButton.setOnClickListener(v -> {
+			SpannableStringBuilder text = (SpannableStringBuilder) binding.tweetEditor.getText();
+			tweetPostPresenter.post(this, text.toString());
+		});
+		return binding.tweetEditorLayout;
 	}
+
+
 
 }

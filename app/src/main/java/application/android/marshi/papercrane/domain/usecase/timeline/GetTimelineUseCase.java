@@ -22,10 +22,10 @@ import java.util.List;
 public class GetTimelineUseCase extends UseCase<GetTimelineUseCase.TimelineRequest, List<TweetItem>> {
 
 	@Inject
-	public GetTimelineUseCase(){}
+	TweetRepository tweetRepository;
 
 	@Inject
-	TweetRepository tweetRepository;
+	public GetTimelineUseCase(){}
 
 	protected List<TweetItem> call(TimelineRequest request) throws TwitterException {
 		List<TweetItem> rawTweetItemList = tweetRepository.getTweetItemList(request.getAccessToken(), request.getPaging(), request.getType());
