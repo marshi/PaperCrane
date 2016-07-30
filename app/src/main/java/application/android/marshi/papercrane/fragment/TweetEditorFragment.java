@@ -1,15 +1,18 @@
 package application.android.marshi.papercrane.fragment;
 
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.SpannableStringBuilder;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import application.android.marshi.papercrane.R;
 import application.android.marshi.papercrane.databinding.FragmentTweetEditorBinding;
 import application.android.marshi.papercrane.di.App;
+import application.android.marshi.papercrane.enums.ExtraKeys;
 import application.android.marshi.papercrane.presenter.TweetPostPresenter;
 
 import javax.inject.Inject;
@@ -55,6 +58,15 @@ public class TweetEditorFragment extends Fragment {
 			SpannableStringBuilder text = (SpannableStringBuilder) binding.tweetEditor.getText();
 			tweetPostPresenter.post(this, text.toString());
 		});
+
+		Intent intent = getActivity().getIntent();
+		//リプライの場合はUSER_IDがextraに送られてくる.
+		String userId = intent.getStringExtra(ExtraKeys.USER_ID);
+		if (!TextUtils.isEmpty(userId)) {
+			String text = userId + " ";
+			binding.tweetEditor.setText(text);
+			binding.tweetEditor.setSelection(text.length());
+		}
 		return binding.tweetEditorLayout;
 	}
 

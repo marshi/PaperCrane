@@ -19,12 +19,12 @@
 						android:gravity="top|start"
 						android:background="@drawable/frame_blank"
 		/>
-		<ImageView
+		<View
 						android:id="@+id/editor_divider"
-						android:src="@android:drawable/divider_horizontal_textfield"
-						android:scaleType="fitXY"
 						android:layout_width="match_parent"
-						android:layout_height="wrap_content"
+						android:background="@drawable/gradient"
+						android:layout_marginTop="12dp"
+						android:layout_height="1dp"
 						android:layout_below="@+id/tweet_editor"
 						android:layout_alignParentStart="true"
 		/>
