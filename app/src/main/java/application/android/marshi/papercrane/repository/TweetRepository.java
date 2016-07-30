@@ -1,5 +1,6 @@
 package application.android.marshi.papercrane.repository;
 
+import android.util.Log;
 import application.android.marshi.papercrane.TwitterClient;
 import application.android.marshi.papercrane.domain.model.TweetItem;
 import application.android.marshi.papercrane.enums.TweetPage;
@@ -56,29 +57,40 @@ public class TweetRepository {
 		return tweetItemList;
 	}
 
+	public boolean postTweet(AccessToken accessToken, String message) {
+		try {
+			Twitter twitter = TwitterClient.getInstance(accessToken);
+			twitter.updateStatus(message);
+			return true;
+		} catch (TwitterException e) {
+			Log.e("", "", e);
+			return false;
+		}
+	}
+
 	private TweetItem convertFrom(Status status) {
 		User user = status.getUser();
 		return new TweetItem(
-			status.getId(),
-			"@" + user.getScreenName(),
-			status.getText(),
-			user.getName(),
-			user.getProfileImageURL(),
-			status.getCreatedAt(),
-			ViewType.Normal
+				status.getId(),
+				"@" + user.getScreenName(),
+				status.getText(),
+				user.getName(),
+				user.getProfileImageURL(),
+				status.getCreatedAt(),
+				ViewType.Normal
 		);
 	}
 
 	private TweetItem convertFrom(DirectMessage dm) {
 		User user = dm.getSender();
 		return new TweetItem(
-			dm.getId(),
-			"@" + user.getScreenName(),
-			dm.getText(),
-			user.getName(),
-			user.getProfileImageURL(),
-			dm.getCreatedAt(),
-			ViewType.Normal
+				dm.getId(),
+				"@" + user.getScreenName(),
+				dm.getText(),
+				user.getName(),
+				user.getProfileImageURL(),
+				dm.getCreatedAt(),
+				ViewType.Normal
 		);
 	}
 
