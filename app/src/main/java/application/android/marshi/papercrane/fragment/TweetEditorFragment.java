@@ -67,6 +67,12 @@ public class TweetEditorFragment extends Fragment {
 			binding.tweetEditor.setText(text);
 			binding.tweetEditor.setSelection(text.length());
 		}
+		//リツイートの場合はUSER_CONTENTがextraに送られてくる.
+		String tweetContent = intent.getStringExtra(ExtraKeys.TWEET_CONTENT);
+		if (!TextUtils.isEmpty(tweetContent)) {
+			binding.tweetEditor.setText("RT " + tweetContent);
+		}
+
 		return binding.tweetEditorLayout;
 	}
 

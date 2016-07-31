@@ -24,6 +24,11 @@ public class TweetDetailActivity extends AppCompatActivity {
 			intent.putExtra(ExtraKeys.USER_ID, binding.tweetDetailUserId.getText().toString());
 			TweetEditorActivity.startActivity(this, intent);
 		});
+		binding.retweetIcon.setOnClickListener(v -> {
+			Intent intent = new Intent();
+			intent.putExtra(ExtraKeys.TWEET_CONTENT, binding.tweetDetailContent.getText().toString());
+			TweetEditorActivity.startActivity(this, intent);
+		});
 	}
 
 }
