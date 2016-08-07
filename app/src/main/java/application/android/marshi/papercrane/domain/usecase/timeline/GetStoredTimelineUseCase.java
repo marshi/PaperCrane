@@ -45,6 +45,7 @@ public class GetStoredTimelineUseCase extends UseCase<TweetPage, List<TweetItem>
 					tweet.getContent(),
 					tweet.getUserName(),
 					tweet.getProfileImageUrl(),
+					tweet.getFav(),
 					tweet.getTweetAt(),
 					ViewType.Normal
 				)).collect(Collectors.toCollection(ArrayList::new));

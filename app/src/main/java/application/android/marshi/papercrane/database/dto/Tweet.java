@@ -16,18 +16,19 @@ import java.util.Date;
 @Getter
 public class Tweet {
 
-    public Tweet(Long tweetId, String userId, String userName, String content, String profileImageUrl, Date tweetAt, String tweetPage) {
+    public Tweet(Long tweetId, String userId, String userName, String content, String profileImageUrl, Boolean fav, Date tweetAt, String tweetPage) {
         this.tweetId = tweetId;
         this.userId = userId;
         this.userName = userName;
         this.content = content;
         this.profileImageUrl = profileImageUrl;
+        this.fav = fav;
         this.tweetAt = tweetAt;
         this.tweetPage = tweetPage;
     }
 
     @PrimaryKey(autoincrement = true, auto = true)
-	public long id;
+    public long id;
 
     @Column
     public Long tweetId;
@@ -43,6 +44,9 @@ public class Tweet {
 
     @Column
     public String profileImageUrl;
+
+    @Column
+    public Boolean fav;
 
     @Column(indexed = true)
     public Date tweetAt;

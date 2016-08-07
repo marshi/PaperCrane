@@ -26,10 +26,10 @@ import java.util.List;
 public class TweetRepository {
 
 	@Inject
-	public TweetRepository(){}
+	LastTweetAccessTimeRepository lastTweetAccessTimeRepository;
 
 	@Inject
-	LastTweetAccessTimeRepository lastTweetAccessTimeRepository;
+	public TweetRepository() {}
 
 	public List<TweetItem> getTweetItemList(AccessToken accessToken, Paging paging, TweetPage tweetPage) throws TwitterException {
 		lastTweetAccessTimeRepository.set();
@@ -68,29 +68,44 @@ public class TweetRepository {
 		}
 	}
 
+	public boolean addFav(AccessToken accessToken, Long tweetId) throws TwitterException {
+		Twitter twitter = TwitterClient.getInstance(accessToken);
+		Status favorite = twitter.createFavorite(tweetId);
+		twitter.tweets().lookup()
+		return favorite != null;
+	}
+
+	public boolean removeFav(AccessToken accessToken, Long tweetId) throws TwitterException {
+		Twitter twitter = TwitterClient.getInstance(accessToken);
+		Status favorite = twitter.destroyFavorite(tweetId);
+		return favorite != null;
+	}
+
 	private TweetItem convertFrom(Status status) {
 		User user = status.getUser();
 		return new TweetItem(
-				status.getId(),
-				"@" + user.getScreenName(),
-				status.getText(),
-				user.getName(),
-				user.getProfileImageURL(),
-				status.getCreatedAt(),
-				ViewType.Normal
+			status.getId(),
+			"@" + user.getScreenName(),
+			status.getText(),
+			user.getName(),
+			user.getProfileImageURL(),
+			status.isFavorited(),
+			status.getCreatedAt(),
+			ViewType.Normal
 		);
 	}
 
 	private TweetItem convertFrom(DirectMessage dm) {
 		User user = dm.getSender();
 		return new TweetItem(
-				dm.getId(),
-				"@" + user.getScreenName(),
-				dm.getText(),
-				user.getName(),
-				user.getProfileImageURL(),
-				dm.getCreatedAt(),
-				ViewType.Normal
+			dm.getId(),
+			"@" + user.getScreenName(),
+			dm.getText(),
+			user.getName(),
+			user.getProfileImageURL(),
+			false,
+			dm.getCreatedAt(),
+			ViewType.Normal
 		);
 	}
 
