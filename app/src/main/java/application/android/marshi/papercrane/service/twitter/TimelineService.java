@@ -106,6 +106,7 @@ public class TimelineService {
 					t.getUserName(),
 					t.getContent(),
 					t.getProfileImageUrl(),
+					t.isFav(),
 					t.getTweetAt(),
 					tweetPage.name()
 				)).collect(Collectors.toList()))

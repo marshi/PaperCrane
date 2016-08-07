@@ -20,18 +20,20 @@ public class TweetItem implements Parcelable {
     private String userName;
     private String content;
     private String profileImageUrl;
+    private boolean fav;
     private Date tweetAt;
 
     @NonNull
     private ViewType viewType;
 
-    public TweetItem(Long id, String userId, String content, String userName, String profileImageUrl, Date tweetAt, ViewType viewType) {
+    public TweetItem(Long id, String userId, String content, String userName, String profileImageUrl, boolean fav, Date tweetAt, ViewType viewType) {
         this.id = id;
         this.userId = userId;
         this.content = content;
         this.userName = userName;
         this.profileImageUrl = profileImageUrl;
         this.tweetAt = tweetAt;
+        this.fav = fav;
         this.viewType = viewType;
     }
 
@@ -43,7 +45,7 @@ public class TweetItem implements Parcelable {
      * @return
      */
     public static TweetItem createReadMore(Long id) {
-        return new TweetItem(id, null, null, null, null, null, ViewType.ReadMore);
+        return new TweetItem(id, null, null, null, null, false, null, ViewType.ReadMore);
     }
 
     public Long getId() {
@@ -69,6 +71,8 @@ public class TweetItem implements Parcelable {
     public String getUserId() {
         return userId;
     }
+
+    public boolean isFav() { return fav; }
 
     public Date getTweetAt() {
         return tweetAt;
@@ -122,6 +126,7 @@ public class TweetItem implements Parcelable {
         dest.writeString(this.userName);
         dest.writeString(this.content);
         dest.writeString(this.profileImageUrl);
+        dest.writeByte(this.fav ? (byte) 1 : (byte) 0);
         dest.writeLong(this.tweetAt != null ? this.tweetAt.getTime() : -1);
         dest.writeInt(this.viewType == null ? -1 : this.viewType.ordinal());
     }
@@ -132,6 +137,7 @@ public class TweetItem implements Parcelable {
         this.userName = in.readString();
         this.content = in.readString();
         this.profileImageUrl = in.readString();
+        this.fav = in.readByte() != 0;
         long tmpTweetAt = in.readLong();
         this.tweetAt = tmpTweetAt == -1 ? null : new Date(tmpTweetAt);
         int tmpViewType = in.readInt();

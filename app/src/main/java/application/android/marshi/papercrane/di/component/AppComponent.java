@@ -3,6 +3,7 @@ package application.android.marshi.papercrane.di.component;
 import application.android.marshi.papercrane.activity.TimelineActivity;
 import application.android.marshi.papercrane.activity.LoginActivity;
 import application.android.marshi.papercrane.activity.MainActivity;
+import application.android.marshi.papercrane.activity.TweetDetailActivity;
 import application.android.marshi.papercrane.di.module.AppModule;
 import application.android.marshi.papercrane.di.module.DatabaseModule;
 import application.android.marshi.papercrane.di.module.RepositoryModule;
@@ -29,5 +30,7 @@ public interface AppComponent {
 	void inject(TweetListFragment tweetListFragment);
 
 	void inject(TweetEditorFragment tweetEditorFragment);
+
+	void inject(TweetDetailActivity tweetDetailActivity);
 
 }
