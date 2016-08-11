@@ -1,7 +1,7 @@
 package application.android.marshi.papercrane.domain.usecase.timeline;
 
 import application.android.marshi.papercrane.domain.usecase.UseCase;
-import application.android.marshi.papercrane.repository.TweetRepository;
+import application.android.marshi.papercrane.repository.TweetApiRepository;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import twitter4j.TwitterException;
@@ -16,14 +16,14 @@ import javax.inject.Inject;
 public class PostTweetUseCase extends UseCase<PostTweetUseCase.PostTweetRequest, Boolean> {
 
 	@Inject
-	TweetRepository tweetRepository;
+	TweetApiRepository tweetApiRepository;
 
 	@Inject
 	public PostTweetUseCase() {}
 
 	@Override
 	protected Boolean call(PostTweetRequest request) throws TwitterException {
-		return tweetRepository.postTweet(request.getAccessToken(), request.getMessage());
+		return tweetApiRepository.postTweet(request.getAccessToken(), request.getMessage());
 	}
 
 	@AllArgsConstructor

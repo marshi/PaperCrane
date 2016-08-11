@@ -1,7 +1,7 @@
 package application.android.marshi.papercrane.domain.usecase.reaction;
 
 import application.android.marshi.papercrane.domain.usecase.UseCase;
-import application.android.marshi.papercrane.repository.TweetRepository;
+import application.android.marshi.papercrane.repository.TweetApiRepository;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import twitter4j.TwitterException;
@@ -15,14 +15,14 @@ import javax.inject.Inject;
 public class RemoveFavUseCase extends UseCase<RemoveFavUseCase.RemoveFavParameter, Boolean>{
 
 	@Inject
-	TweetRepository tweetRepository;
+	TweetApiRepository tweetApiRepository;
 
 	@Inject
 	public RemoveFavUseCase() {}
 
 	@Override
 	protected Boolean call(RemoveFavParameter param) throws TwitterException {
-		return tweetRepository.removeFav(param.getAccessToken(), param.getTweetId());
+		return tweetApiRepository.removeFav(param.getAccessToken(), param.getTweetId());
 	}
 
 	@Data

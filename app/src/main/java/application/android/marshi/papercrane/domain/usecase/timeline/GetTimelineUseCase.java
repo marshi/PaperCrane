@@ -3,7 +3,7 @@ package application.android.marshi.papercrane.domain.usecase.timeline;
 import application.android.marshi.papercrane.domain.model.TweetItem;
 import application.android.marshi.papercrane.domain.usecase.UseCase;
 import application.android.marshi.papercrane.enums.TweetPage;
-import application.android.marshi.papercrane.repository.TweetRepository;
+import application.android.marshi.papercrane.repository.TweetApiRepository;
 import com.annimon.stream.Collectors;
 import com.annimon.stream.Stream;
 import lombok.AllArgsConstructor;
@@ -22,13 +22,13 @@ import java.util.List;
 public class GetTimelineUseCase extends UseCase<GetTimelineUseCase.TimelineRequest, List<TweetItem>> {
 
 	@Inject
-	TweetRepository tweetRepository;
+	TweetApiRepository tweetApiRepository;
 
 	@Inject
 	public GetTimelineUseCase(){}
 
 	protected List<TweetItem> call(TimelineRequest request) throws TwitterException {
-		List<TweetItem> rawTweetItemList = tweetRepository.getTweetItemList(request.getAccessToken(), request.getPaging(), request.getType());
+		List<TweetItem> rawTweetItemList = tweetApiRepository.getTweetItemList(request.getAccessToken(), request.getPaging(), request.getType());
 		if (rawTweetItemList.isEmpty()) {
 			return new ArrayList<>();
 		}

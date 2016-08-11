@@ -20,6 +20,8 @@ import application.android.marshi.papercrane.enums.TweetPage;
 import application.android.marshi.papercrane.enums.ViewType;
 import application.android.marshi.papercrane.presenter.TweetListPresenter;
 import application.android.marshi.papercrane.service.ToastService;
+import application.android.marshi.papercrane.service.auth.AccessTokenService;
+import application.android.marshi.papercrane.service.twitter.TimelineService;
 import application.android.marshi.papercrane.view.TimelineSwipeRefreshView;
 import com.annimon.stream.Stream;
 import com.trello.rxlifecycle.components.support.RxFragment;
@@ -38,6 +40,12 @@ public class TweetListFragment extends RxFragment implements TimelineSwipeRefres
 	private TweetRecyclerViewAdapter tweetRecyclerViewAdapter;
 
 	private SwipeRefreshLayout swipeRefreshLayout;
+
+	@Inject
+	AccessTokenService accessTokenService;
+
+	@Inject
+	TimelineService timelineService;
 
 	@Inject
 	TweetListPresenter tweetListPresenter;
@@ -97,7 +105,7 @@ public class TweetListFragment extends RxFragment implements TimelineSwipeRefres
 	}
 
 	private void configureTweetRecyclerView(@NonNull RecyclerView recyclerView) {
-		tweetRecyclerViewAdapter = new TweetRecyclerViewAdapter(this);
+		tweetRecyclerViewAdapter = new TweetRecyclerViewAdapter(this, accessTokenService, timelineService);
 		LinearLayoutManager layoutManager = new LinearLayoutManager(this.getActivity());
 		recyclerView.setItemViewCacheSize(1000);
 		recyclerView.setLayoutManager(layoutManager);

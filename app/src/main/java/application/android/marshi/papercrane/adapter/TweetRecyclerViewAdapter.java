@@ -29,7 +29,6 @@ import application.android.marshi.papercrane.service.twitter.TimelineService;
 import com.trello.rxlifecycle.components.support.RxFragment;
 import lombok.Getter;
 
-import javax.inject.Inject;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -40,17 +39,17 @@ public class TweetRecyclerViewAdapter extends RecyclerView.Adapter<BindingHolder
 
 	private RxFragment rxFragment;
 
-	@Inject
 	AccessTokenService accessTokenService;
 
-	@Inject
 	TimelineService timelineService;
 
 	@Getter
 	private final LinkedList<TweetItem> mValues = new LinkedList<>();
 
-	public TweetRecyclerViewAdapter(RxFragment rxFragment) {
+	public TweetRecyclerViewAdapter(RxFragment rxFragment, AccessTokenService accessTokenService, TimelineService timelineService) {
 		this.rxFragment = rxFragment;
+		this.accessTokenService = accessTokenService;
+		this.timelineService = timelineService;
 	}
 
 	@Override

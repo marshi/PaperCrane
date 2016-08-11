@@ -1,9 +1,8 @@
-package application.android.marshi.papercrane.repository.cache;
+package application.android.marshi.papercrane.repository.store;
 
 import android.util.Log;
 import application.android.marshi.papercrane.database.dto.OrmaDatabase;
 import application.android.marshi.papercrane.database.dto.Tweet;
-import application.android.marshi.papercrane.enums.TweetPage;
 import com.github.gfx.android.orma.exception.OrmaException;
 
 import javax.inject.Inject;
@@ -13,25 +12,25 @@ import java.util.List;
 /**
  * @author marshi on 2016/05/29.
  */
-public class TweetCacheRepository {
+public class TweetStoreRepository {
 
-	private long cacheSize = 1000;
+	private long storeSize = 1000;
 
 	@Inject
 	OrmaDatabase ormaDatabase;
 
 	@Inject
-	public TweetCacheRepository() {}
+	public TweetStoreRepository() {}
 
-	public void set(Tweet tweet, TweetPage tweetPage) {
+	public void set(Tweet tweet) {
 		List<Tweet> tweetList = new ArrayList<>();
 		tweetList.add(tweet);
-		set(tweetList, tweetPage);
+		set(tweetList);
 	}
 
-	public void set(List<Tweet> tweetList, TweetPage tweetPage) {
+	public void set(List<Tweet> tweetList) {
 		insert(tweetList);
-		List<Tweet> tweets = selectOrderByDate(tweetPage, cacheSize);
+		List<Tweet> tweets = selectOrderByDateWithOffset(storeSize);
 		List<Long> ids = new ArrayList<>();
 		for (Tweet t : tweets) {
 			ids.add(t.getId());
@@ -39,8 +38,8 @@ public class TweetCacheRepository {
 		delete(ids);
 	}
 
-	public List<Tweet> get(TweetPage tweetPage) {
-		return selectOrderByDate(tweetPage);
+	public List<Tweet> select(List<Long> ids) {
+		return ormaDatabase.relationOfTweet().selector().idIn(ids).orderByTweetAtDesc().toList();
 	}
 
 	private void insert(List<Tweet> tweetList) {
@@ -57,23 +56,13 @@ public class TweetCacheRepository {
 		}
 	}
 
-	private List<Tweet> selectOrderByDate(TweetPage tweetPage, long offset) {
+	private List<Tweet> selectOrderByDateWithOffset(long offset) {
 		return ormaDatabase
 			.relationOfTweet()
 			.selector()
-			.tweetPageEq(tweetPage.name())
 			.orderByTweetAtDesc()
 			.offset(offset)
 			.limit(1000)
-			.toList();
-	}
-
-	private List<Tweet> selectOrderByDate(TweetPage tweetPage) {
-		return ormaDatabase
-			.relationOfTweet()
-			.selector()
-			.tweetPageEq(tweetPage.name())
-			.orderByTweetAtDesc()
 			.toList();
 	}
 

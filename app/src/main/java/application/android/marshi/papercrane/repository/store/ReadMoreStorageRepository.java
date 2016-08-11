@@ -1,4 +1,4 @@
-package application.android.marshi.papercrane.repository.cache;
+package application.android.marshi.papercrane.repository.store;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -13,13 +13,13 @@ import java.util.List;
 /**
  * @author marshi on 2016/06/25.
  */
-public class ReadMoreCacheRepository {
+public class ReadMoreStorageRepository {
 
 	@Inject
 	OrmaDatabase ormaDatabase;
 
 	@Inject
-	public ReadMoreCacheRepository() { }
+	public ReadMoreStorageRepository() { }
 
 	public List<ReadMore> get() {
 		return selectAll();

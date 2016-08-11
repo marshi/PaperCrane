@@ -2,7 +2,7 @@ package application.android.marshi.papercrane.service.twitter;
 
 import application.android.marshi.papercrane.domain.usecase.reaction.AddFavUseCase;
 import application.android.marshi.papercrane.domain.usecase.reaction.RemoveFavUseCase;
-import application.android.marshi.papercrane.repository.cache.TweetCacheRepository;
+import application.android.marshi.papercrane.repository.store.TweetStoreRepository;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -24,7 +24,7 @@ public class TwitterFavService {
 	RemoveFavUseCase removeFavUseCase;
 
 	@Inject
-	TweetCacheRepository tweetCacheRepository;
+	TweetStoreRepository tweetStoreRepository;
 
 	@Inject
 	public TwitterFavService() {}

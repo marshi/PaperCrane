@@ -11,7 +11,7 @@ import lombok.Getter;
 public enum TweetPage {
 
 	HomeTimeline(0, "Home"),
-	MentionTimeline(1, "Mention"),
+	ReplyTimeline(1, "Mention"),
 	DirectMessage(2, "Direct Message");
 
 	public static String BUNDLE_KEY = "tweet_type";

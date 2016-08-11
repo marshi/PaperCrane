@@ -2,16 +2,17 @@ package application.android.marshi.papercrane.service.twitter;
 
 import android.util.Log;
 import android.widget.Toast;
-import application.android.marshi.papercrane.database.dto.ReadMore;
 import application.android.marshi.papercrane.database.dto.Tweet;
+import application.android.marshi.papercrane.database.dto.ReadMore;
 import application.android.marshi.papercrane.domain.model.TweetItem;
 import application.android.marshi.papercrane.domain.usecase.timeline.GetStoredTimelineUseCase;
 import application.android.marshi.papercrane.domain.usecase.timeline.GetTimelineUseCase;
 import application.android.marshi.papercrane.enums.TweetPage;
 import application.android.marshi.papercrane.enums.TweetSettingValues;
 import application.android.marshi.papercrane.enums.ViewType;
-import application.android.marshi.papercrane.repository.cache.ReadMoreCacheRepository;
-import application.android.marshi.papercrane.repository.cache.TweetCacheRepository;
+import application.android.marshi.papercrane.repository.LatestCacheTweetIdRepository;
+import application.android.marshi.papercrane.repository.store.ReadMoreStorageRepository;
+import application.android.marshi.papercrane.repository.store.TweetStoreRepository;
 import application.android.marshi.papercrane.service.ToastService;
 import com.annimon.stream.Collectors;
 import com.annimon.stream.Stream;
@@ -45,10 +46,13 @@ public class TimelineService {
 	GetStoredTimelineUseCase getStoredTimelineUseCase;
 
 	@Inject
-	TweetCacheRepository tweetCacheRepository;
+	TweetStoreRepository tweetStoreRepository;
 
 	@Inject
-	ReadMoreCacheRepository readMoreCacheRepository;
+	ReadMoreStorageRepository readMoreStorageRepository;
+
+	@Inject
+	LatestCacheTweetIdRepository latestCacheTweetIdRepository;
 
 	@Inject
 	ToastService toastService;
@@ -75,6 +79,18 @@ public class TimelineService {
 		};
 	}
 
+	/**
+	 * Twitter REST APIによるツイートの取得.
+	 * https://dev.twitter.com/rest/public
+	 *
+	 * @param fragment
+	 * @param accessToken
+	 * @param paging
+	 * @param tweetPage
+	 * @param latestTweetId
+	 * @param onNext
+	 * @param onError
+	 */
 	private void loadTweetItems(
 		RxFragment fragment,
 		AccessToken accessToken,
@@ -107,16 +123,19 @@ public class TimelineService {
 					t.getContent(),
 					t.getProfileImageUrl(),
 					t.isFav(),
-					t.getTweetAt(),
-					tweetPage.name()
+					t.getTweetAt()
 				)).collect(Collectors.toList()))
 			.observeOn(Schedulers.io())
 			.subscribe(tweetList -> {
-				tweetCacheRepository.set(tweetList, tweetPage);
+				if (tweetList.isEmpty()) {
+					return;
+				}
+				tweetStoreRepository.set(tweetList);
 				if (tweetList.size() == TweetSettingValues.TWEET_LOAD_SIZE) {
 					Tweet oldTweetItem = tweetList.get(tweetList.size() - 1);
-					readMoreCacheRepository.set(new ReadMore(oldTweetItem.getTweetId()));
+					readMoreStorageRepository.set(new ReadMore(oldTweetItem.getTweetId()));
 				}
+				latestCacheTweetIdRepository.set(tweetList.get(0).getTweetId());
 			}, e -> Log.e("error", "", e));
 	}
 
@@ -190,7 +209,7 @@ public class TimelineService {
 
 	public void deleteStoredReadMore(Long id) {
 		Observable
-			.create((Observable.OnSubscribe<Long>) subscriber -> readMoreCacheRepository.delete(id))
+			.create((Observable.OnSubscribe<Long>) subscriber -> readMoreStorageRepository.delete(id))
 			.subscribeOn(Schedulers.io())
 			.subscribe();
 	}

@@ -23,20 +23,20 @@ import java.util.List;
  * @author marshi on 2016/04/10.
  */
 @Data
-public class TweetRepository {
+public class TweetApiRepository {
 
 	@Inject
 	LastTweetAccessTimeRepository lastTweetAccessTimeRepository;
 
 	@Inject
-	public TweetRepository() {}
+	public TweetApiRepository() {}
 
 	public List<TweetItem> getTweetItemList(AccessToken accessToken, Paging paging, TweetPage tweetPage) throws TwitterException {
 		lastTweetAccessTimeRepository.set();
 		Twitter twitter = TwitterClient.getInstance(accessToken);
 		ResponseList<Status> statuses;
 		switch (tweetPage) {
-			case MentionTimeline:
+			case ReplyTimeline:
 				statuses =  twitter.getMentionsTimeline(paging);
 				break;
 			case DirectMessage:
@@ -71,7 +71,6 @@ public class TweetRepository {
 	public boolean addFav(AccessToken accessToken, Long tweetId) throws TwitterException {
 		Twitter twitter = TwitterClient.getInstance(accessToken);
 		Status favorite = twitter.createFavorite(tweetId);
-		twitter.tweets().lookup()
 		return favorite != null;
 	}
 

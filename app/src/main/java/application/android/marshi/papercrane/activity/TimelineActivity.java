@@ -9,10 +9,12 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v7.app.AppCompatActivity;
 import application.android.marshi.papercrane.R;
+import application.android.marshi.papercrane.TwitterClient;
 import application.android.marshi.papercrane.adapter.TweetPagerAdapter;
 import application.android.marshi.papercrane.databinding.ActivityTweetListBinding;
 import application.android.marshi.papercrane.di.App;
 import application.android.marshi.papercrane.service.auth.AccessTokenService;
+import application.android.marshi.papercrane.service.twitter.streaming.TweetStreamingService;
 
 import javax.inject.Inject;
 
@@ -25,8 +27,10 @@ public class TimelineActivity extends AppCompatActivity {
 	@Inject
 	AccessTokenService accessTokenService;
 
-	private ActivityTweetListBinding activityTweetListBinding;
+	@Inject
+	TweetStreamingService tweetStreamingService;
 
+	private ActivityTweetListBinding activityTweetListBinding;
 
 	public static void startActivity(Context context) {
 		Intent intent = new Intent(context, TimelineActivity.class);
@@ -44,6 +48,9 @@ public class TimelineActivity extends AppCompatActivity {
 			Uri uri = intent.getData();
 			accessTokenService.saveAccessToken(uri);
 		}
+
+		//Twitter Streaming APIの読み込み開始
+		TwitterClient.subscribe(accessTokenService.getAccessToken(), tweetStreamingService);
 
 		FragmentManager fragmentManager = getSupportFragmentManager();
 		FragmentPagerAdapter fragmentPagerAdapter = new TweetPagerAdapter(fragmentManager);

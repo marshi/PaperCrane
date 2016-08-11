@@ -1,7 +1,7 @@
 package application.android.marshi.papercrane.domain.usecase.reaction;
 
 import application.android.marshi.papercrane.domain.usecase.UseCase;
-import application.android.marshi.papercrane.repository.TweetRepository;
+import application.android.marshi.papercrane.repository.TweetApiRepository;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import twitter4j.TwitterException;
@@ -19,11 +19,11 @@ public class AddFavUseCase extends UseCase<AddFavUseCase.AddFavRequest, Boolean>
 	public AddFavUseCase() {}
 
 	@Inject
-	TweetRepository tweetRepository;
+	TweetApiRepository tweetApiRepository;
 
 	@Override
 	protected Boolean call(AddFavRequest param) throws TwitterException {
-		return tweetRepository.addFav(param.getAccessToken(), param.getTweetId());
+		return tweetApiRepository.addFav(param.getAccessToken(), param.getTweetId());
 	}
 
 	@Data

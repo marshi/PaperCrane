@@ -1,14 +1,20 @@
 package application.android.marshi.papercrane.database.dto;
 
+import application.android.marshi.papercrane.repository.LatestCacheTweetIdRepository;
 import com.github.gfx.android.orma.annotation.Column;
 import com.github.gfx.android.orma.annotation.PrimaryKey;
 import com.github.gfx.android.orma.annotation.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import twitter4j.Status;
 
 import java.util.Date;
 
 /**
+ * ツイートデータの管理.
+ * Tweetテーブルではtwitter apiで一度取得してアプリで表示済みのツイートのキャッシュと、
+ * APIから取得したがまだアプリで表示されていない先読みデータの管理を行う.
+ * キャッシュ用のデータと先読み用のデータの境界は{@link LatestCacheTweetIdRepository}で管理される.
  * @author marshi on 2016/05/29.
  */
 @Table
@@ -16,45 +22,50 @@ import java.util.Date;
 @Getter
 public class Tweet {
 
-    public Tweet(Long tweetId, String userId, String userName, String content, String profileImageUrl, Boolean fav, Date tweetAt, String tweetPage) {
-        this.tweetId = tweetId;
-        this.userId = userId;
-        this.userName = userName;
-        this.content = content;
-        this.profileImageUrl = profileImageUrl;
-        this.fav = fav;
-        this.tweetAt = tweetAt;
-        this.tweetPage = tweetPage;
-    }
+	public Tweet(Long tweetId, String userId, String userName, String content, String profileImageUrl, Boolean fav, Date tweetAt) {
+		this.tweetId = tweetId;
+		this.userId = userId;
+		this.userName = userName;
+		this.content = content;
+		this.profileImageUrl = profileImageUrl;
+		this.fav = fav;
+		this.tweetAt = tweetAt;
+	}
 
-    @PrimaryKey(autoincrement = true, auto = true)
-    public long id;
+	public Tweet(Status status) {
+		this (
+			status.getId(),
+			"@" + status.getUser().getScreenName(),
+			status.getUser().getName(),
+			status.getText(),
+			status.getUser().getProfileImageURL(),
+			status.isFavorited(),
+			status.getCreatedAt()
+		);
+	}
 
-    @Column
-    public Long tweetId;
+	@PrimaryKey(autoincrement = true, auto = true)
+	public long id;
 
-    @Column
-    public String userId;
+	@Column
+	public Long tweetId;
 
-    @Column
-    public String userName;
+	@Column
+	public String userId;
 
-    @Column
-    public String content;
+	@Column
+	public String userName;
 
-    @Column
-    public String profileImageUrl;
+	@Column
+	public String content;
 
-    @Column
-    public Boolean fav;
+	@Column
+	public String profileImageUrl;
 
-    @Column(indexed = true)
-    public Date tweetAt;
+	@Column
+	public Boolean fav;
 
-	/**
-	 * ページを表す文字列.
-     */
-    @Column(indexed = true)
-    public String tweetPage;
+	@Column(indexed = true)
+	public Date tweetAt;
 
 }
