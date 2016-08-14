@@ -24,4 +24,5 @@ abstract public class UseCase<P, R> {
 			}
 		});
 	}
+
 }

@@ -10,6 +10,7 @@ import application.android.marshi.papercrane.enums.ViewType;
 import com.annimon.stream.function.Predicate;
 import com.bumptech.glide.Glide;
 import lombok.NonNull;
+import twitter4j.Status;
 
 import java.util.Date;
 
@@ -35,6 +36,19 @@ public class TweetItem implements Parcelable {
         this.tweetAt = tweetAt;
         this.fav = fav;
         this.viewType = viewType;
+    }
+
+    public TweetItem(Status status) {
+        this(
+          status.getId(),
+          "@" + status.getUser().getScreenName(),
+          status.getText(),
+          status.getUser().getName(),
+          status.getUser().getProfileImageURL(),
+          status.isFavorited(),
+          status.getCreatedAt(),
+          ViewType.Normal
+        );
     }
 
     /**
@@ -73,6 +87,10 @@ public class TweetItem implements Parcelable {
     }
 
     public boolean isFav() { return fav; }
+
+    public void setFav(boolean fav) {
+        this.fav = fav;
+    }
 
     public Date getTweetAt() {
         return tweetAt;

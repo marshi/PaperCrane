@@ -57,6 +57,15 @@ public class TweetRepository {
 		return tweetItemList;
 	}
 
+	public TweetItem detail(AccessToken accessToken, Long tweetId) throws TwitterException {
+		Twitter twitter = TwitterClient.getInstance(accessToken);
+		ResponseList<Status> statuses = twitter.tweets().lookup(tweetId);
+		if (statuses != null && !statuses.isEmpty()) {
+			return new TweetItem(statuses.get(0));
+		}
+		return null;
+	}
+
 	public boolean postTweet(AccessToken accessToken, String message) {
 		try {
 			Twitter twitter = TwitterClient.getInstance(accessToken);
@@ -71,7 +80,7 @@ public class TweetRepository {
 	public boolean addFav(AccessToken accessToken, Long tweetId) throws TwitterException {
 		Twitter twitter = TwitterClient.getInstance(accessToken);
 		Status favorite = twitter.createFavorite(tweetId);
-		twitter.tweets().lookup()
+		twitter.tweets().lookup();
 		return favorite != null;
 	}
 
