@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+				xmlns:android="http://schemas.android.com/apk/res/android"
+				xmlns:app="http://schemas.android.com/apk/res-auto"
+				xmlns:tools="http://schemas.android.com/tools"
+>
+	<data>
+		<variable name="tweet" type="application.android.marshi.papercrane.domain.model.TweetItem"/>
+		<variable name="onClick" type="android.view.View.OnClickListener"/>
+	</data>
+
+	<RelativeLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:paddingStart="5dp"
+					android:paddingEnd="5dp"
+					android:orientation="horizontal"
+	        android:onClick="@{onClick}"
+	>
+
+		<ImageView
+						android:id="@+id/profile_image"
+						android:layout_width="40dp"
+						android:layout_height="40dp"
+						android:contentDescription="profile"
+						app:profileImage="@{tweet.profileImageUrl}"
+						android:transitionName="tweet_detail_profile_image"
+		/>
+
+		<TextView
+						android:id="@+id/user_name"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_marginStart="10dp"
+						android:layout_toEndOf="@id/profile_image"
+		        android:text="@{tweet.userName}"
+						tools:text="user_name"
+		/>
+
+		<TextView
+						android:id="@+id/user_id"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:layout_marginStart="10dp"
+						android:layout_toEndOf="@id/user_name"
+		        android:text="@{tweet.userId}"
+		        tools:text="user_id"
+		/>
+
+		<TextView
+						android:id="@+id/content"
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:layout_marginTop="@dimen/text_margin"
+						android:textAppearance="?attr/textAppearanceListItem"
+						android:ellipsize="none"
+						android:layout_alignStart="@id/user_name"
+						android:autoLink="web"
+						android:textColorLink="@color/theme500"
+						android:textSize="@dimen/text_size_small"
+						android:text="@{tweet.content}"
+		        tools:text="aaaaaaaaaaaaaaaaaiiiiiiiiiiiiiiiiiiiuuuuuuuuuuuuuuuuuuueeeeeeeeeeeeeeeeee"
+		/>
+
+		<TextView
+						android:id="@+id/tweetAt"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:textAppearance="?attr/textAppearanceListItem"
+						android:layout_below="@id/content"
+						android:layout_alignParentEnd="true"
+						android:textSize="@dimen/text_size_micro"
+						app:tweetTime="@{tweet.tweetAt}"
+		        tools:text="1日前"
+		/>
+
+	</RelativeLayout>
+
+</layout>

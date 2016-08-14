@@ -1,39 +1,71 @@
 apply plugin: 'com.android.application'
 apply plugin: 'me.tatarka.retrolambda'
+apply plugin: 'android-apt'
 
 android {
-    compileSdkVersion 22
-    buildToolsVersion "23.0.2"
+    compileSdkVersion 23
+    buildToolsVersion "23.0.3"
+    dataBinding {
+        enabled = true
+    }
 
     defaultConfig {
         applicationId "application.android.marshi.papercrane"
         minSdkVersion 21
-        targetSdkVersion 22
+        targetSdkVersion 23
         versionCode 1
         versionName "1.0"
     }
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
-    }
-
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-
+    buildTypes {
+        debug {
+            minifyEnabled false
+            buildConfigField "String", "CONSUMER_KEY", "\"${project.property("twitterConsumerKey")}\""
+            buildConfigField "String", "SECRET_KEY", "\"${project.property("twitterSecret")}\""
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        release {
+            minifyEnabled false
+            buildConfigField "String", "CONSUMER_KEY", "\"${project.property("twitterConsumerKey")}\""
+            buildConfigField "String", "SECRET_KEY", "\"${project.property("twitterSecret")}\""
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    packagingOptions {
+        exclude 'META-INF/services/javax.annotation.processing.Processor'
+    }
 }
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    testCompile 'junit:junit:4.12'
-    provided "org.projectlombok:lombok:1.16.8"
-    compile 'com.android.support:appcompat-v7:22.2.1'
-    compile 'com.android.support:support-v4:22.2.1'
-    compile 'com.android.support:design:22.2.1'
+    // http://mvnrepository.com/artifact/com.annimon/stream
+    compile group: 'com.annimon', name: 'stream', version: '1.0.9'
+    compile "com.android.support:appcompat-v7:${supportLibVersion}"
+    compile "com.android.support:support-v4:${supportLibVersion}"
+    compile "com.android.support:design:${supportLibVersion}"
+    compile "com.android.support:recyclerview-v7:${supportLibVersion}"
     compile 'io.reactivex:rxjava:1.1.2'
-    compile 'io.reactivex:rxandroid:1.1.0'
-    compile 'com.android.support:recyclerview-v7:22.2.1'
+    compile 'io.reactivex:rxandroid:1.2.0'
+    compile 'com.trello:rxlifecycle:0.5.0'
+    compile 'com.trello:rxlifecycle-components:0.5.0'
+    compile 'com.squareup.retrofit2:retrofit:2.0.1'
+    compile 'com.google.android.gms:play-services-appindexing:9.2.1'
+    compile 'org.twitter4j:twitter4j-core:4.0.4'
+    compile 'com.google.dagger:dagger:2.4'
+    compile 'com.github.bumptech.glide:glide:3.7.0'
+    compile 'com.github.bumptech.glide:okhttp-integration:1.4.0'
+    compile 'com.github.gfx.android.orma:orma:2.4.7'
+    compile 'com.facebook.stetho:stetho:1.3.1'
+    compile 'com.facebook.stetho:stetho-okhttp:1.3.1'
+    compile 'org.threeten:threetenbp:1.3.1'
+    compile 'com.android.support:support-v4:23.4.0'
+    testCompile 'junit:junit:4.12'
+    apt 'com.google.guava:guava:19.0'
+    apt 'com.google.dagger:dagger-compiler:2.4'
+    apt 'com.github.gfx.android.orma:orma-processor:2.4.7'
+    provided 'org.projectlombok:lombok:1.16.8'
+    provided 'javax.annotation:jsr250-api:1.0'
 }
